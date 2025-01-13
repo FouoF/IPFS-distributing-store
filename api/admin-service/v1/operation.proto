@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package adminservice.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "ipfs-store/api/admin-service/v1;v1";
+
+// The greeting service definition.
+service Operation {
+  // Sends a greeting
+  rpc ListNode (ListNodeRequest) returns (ListNodeReply) {
+    option (google.api.http) = {
+      get: "/admin/node/list"
+    };
+  }
+
+  rpc AddNode (AddNodeRequest) returns (AddNodeReply) {
+    option (google.api.http) = {
+      post: "/admin/node/add"
+      body: "*"
+    };
+  }
+
+  rpc RemoveNode (RemoveNodeRequest) returns (RemoveNodeReply) {
+    option (google.api.http) = {
+      post: "/admin/node/remove"
+      body: "*"
+    };
+  }
+
+  rpc ListEndpoint (ListEndpointRequest) returns (ListEndpointReply) {
+    option (google.api.http) = {
+      get: "/admin/endpoint/list"
+    };
+  }
+
+  rpc GetEndpoint (GetEndpointRequest) returns (GetEndpointReply) {
+    option (google.api.http) = {
+      get: "/admin/endpoint/get"
+    };
+  }
+
+  rpc AddEndpoint (AddEndpointRequest) returns (AddEndpointReply) {
+    option (google.api.http) = {
+      post: "/admin/endpoint/add"
+      body: "*"
+    };
+  }
+
+  rpc RemoveEndpoint (RemoveEndpointRequest) returns (RemoveEndpointReply) {
+    option (google.api.http) = {
+      post: "/admin/endpoint/remove"
+      body: "*"
+    };
+  }
+
+  rpc CreateIndex (CreateIndexRequest) returns (CreateIndexReply) {
+    option (google.api.http) = {
+      post: "/admin/index/create"
+      body: "*"
+    };
+  }
+
+  rpc ListIndex (ListIndexRequest) returns (ListIndexReply) {
+    option (google.api.http) = {
+      get: "/admin/index/list"
+    };
+  }
+
+}
+
+message ListNodeRequest {
+
+}
+
+message ListNodeReply {
+  repeated Node node = 1;
+}
+
+message AddNodeRequest {
+  string name = 1;
+  string addr = 2;
+}
+
+message AddNodeReply {
+  bool success = 1;
+}
+
+message RemoveNodeRequest {
+  string name = 1;
+  string addr = 2;
+}
+
+message RemoveNodeReply {
+  bool success = 1;
+}
+
+message ListEndpointRequest {
+
+}
+
+message ListEndpointReply {
+  repeated Endpoint endpoint = 1;
+}
+
+message AddEndpointRequest {
+  string name = 1;
+  string desctiption = 2;
+  string addr = 3;
+}
+
+message AddEndpointReply {
+  bool success = 1;
+}
+
+message RemoveEndpointRequest {
+  string name = 1;
+  string addr = 2;
+}
+
+message RemoveEndpointReply {
+  bool success = 1;
+}
+
+message GetEndpointRequest {
+  string L1Idx = 1;
+  string L2Idx = 2;
+  string L3Idx = 3;
+}
+
+message GetEndpointReply {
+  repeated Endpoint endpoint = 1;
+}
+
+message CreateIndexRequest {
+  string L1Idx = 1;
+  string L2Idx = 2;
+  string L3Idx = 3;
+}
+
+message CreateIndexReply {
+  bool success = 1;
+}
+
+message ListIndexRequest {
+  string L1Idx = 1;
+  string L2Idx = 2;
+  string L3Idx = 3;
+}
+
+message ListIndexReply {
+  repeated string index = 1;
+}
+
+message Node {
+  string id = 1;
+  string name = 2;
+  Status status = 3;
+  string addr = 4;
+}
+
+message Endpoint {
+  string id = 1;
+  string desctiption = 2;
+  string addr = 3;
+  string L1Idx = 4;
+  string L2Idx = 5;
+  string L3Idx = 6;
+}
+
+enum Status {
+  UNKNOWN = 0;
+  ONLINE = 1;
+  OFFLINE = 2;
+}

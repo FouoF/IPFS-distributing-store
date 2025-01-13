@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package adminservice.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "ipfs-store/api/admin-service/v1;v1";
+
+// The greeting service definition.
+service Sync {
+  rpc SyncDataFromEndpoint (SyncDataFromEndpointRequest) returns (stream FileChunk) {}
+  rpc GetDataByIdx (GetetDataRequest) returns (stream FileChunk) {}
+}
+
+message SyncDataFromEndpointRequest {
+
+}
+
+message FileChunk {
+  string L1Idx = 1;
+  string L2Idx = 2;
+  string L3Idx = 3;
+  int64 chunk_index = 4;
+  bytes data = 5;
+  bool is_final_chunk = 6;
+}
+
+message GetetDataRequest {
+  string L1Idx = 1;
+  string L2Idx = 2;
+  string L3Idx = 3;
+}
