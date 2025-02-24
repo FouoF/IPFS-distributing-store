@@ -1,4 +1,4 @@
-module helloworld
+module ipfs-store
 
 go 1.21
 

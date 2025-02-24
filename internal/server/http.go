@@ -1,9 +1,9 @@
 package server
 
 import (
-	v1 "helloworld/api/helloworld/v1"
-	"helloworld/internal/conf"
-	"helloworld/internal/service"
+	v1 "ipfs-store/api/admin-service/v1"
+	"ipfs-store/internal/conf"
+	"ipfs-store/internal/service"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"

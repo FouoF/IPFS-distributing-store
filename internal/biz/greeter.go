@@ -3,7 +3,7 @@ package biz
 import (
 	"context"
 
-	v1 "helloworld/api/helloworld/v1"
+	v1 "ipfs-store/api/admin-service/v1"
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
@@ -11,7 +11,7 @@ import (
 
 var (
 	// ErrUserNotFound is user not found.
-	ErrUserNotFound = errors.NotFound(v1.ErrorReason_USER_NOT_FOUND.String(), "user not found")
+	ErrUserNotFound = errors.NotFound(v1.ErrorReason_RESOURCE_NOT_FOUND.String(), "resource not found")
 )
 
 // Greeter is a Greeter model.

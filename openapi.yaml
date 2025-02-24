@@ -3,21 +3,44 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
+    title: Operation API
     description: The greeting service definition.
     version: 0.0.1
 paths:
-    /helloworld/{name}:
+    /admin/endpoint/add:
+        post:
+            tags:
+                - Operation
+            operationId: Operation_AddEndpoint
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/adminservice.v1.AddEndpointRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.AddEndpointReply'
+    /admin/endpoint/get:
         get:
             tags:
-                - Greeter
-                - subgroup
-            description: Sends a greeting
-            operationId: Greeter_SayHello
+                - Operation
+            operationId: Operation_GetEndpoint
             parameters:
-                - name: name
-                  in: path
-                  required: true
+                - name: L1Idx
+                  in: query
+                  schema:
+                    type: string
+                - name: L2Idx
+                  in: query
+                  schema:
+                    type: string
+                - name: L3Idx
+                  in: query
                   schema:
                     type: string
             responses:
@@ -26,14 +49,249 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/helloworld.v1.HelloReply'
+                                $ref: '#/components/schemas/adminservice.v1.GetEndpointReply'
+    /admin/endpoint/list:
+        get:
+            tags:
+                - Operation
+            operationId: Operation_ListEndpoint
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.ListEndpointReply'
+    /admin/endpoint/remove:
+        post:
+            tags:
+                - Operation
+            operationId: Operation_RemoveEndpoint
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/adminservice.v1.RemoveEndpointRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.RemoveEndpointReply'
+    /admin/index/create:
+        post:
+            tags:
+                - Operation
+            operationId: Operation_CreateIndex
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/adminservice.v1.CreateIndexRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.CreateIndexReply'
+    /admin/index/list:
+        get:
+            tags:
+                - Operation
+            operationId: Operation_ListIndex
+            parameters:
+                - name: L1Idx
+                  in: query
+                  schema:
+                    type: string
+                - name: L2Idx
+                  in: query
+                  schema:
+                    type: string
+                - name: L3Idx
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.ListIndexReply'
+    /admin/node/add:
+        post:
+            tags:
+                - Operation
+            operationId: Operation_AddNode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/adminservice.v1.AddNodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.AddNodeReply'
+    /admin/node/list:
+        get:
+            tags:
+                - Operation
+            description: Sends a greeting
+            operationId: Operation_ListNode
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.ListNodeReply'
+    /admin/node/remove:
+        post:
+            tags:
+                - Operation
+            operationId: Operation_RemoveNode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/adminservice.v1.RemoveNodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.RemoveNodeReply'
 components:
     schemas:
-        helloworld.v1.HelloReply:
+        adminservice.v1.AddEndpointReply:
             type: object
             properties:
-                message:
+                success:
+                    type: boolean
+        adminservice.v1.AddEndpointRequest:
+            type: object
+            properties:
+                name:
                     type: string
-            description: The response message containing the greetings
+                desctiption:
+                    type: string
+                addr:
+                    type: string
+        adminservice.v1.AddNodeReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        adminservice.v1.AddNodeRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                addr:
+                    type: string
+        adminservice.v1.CreateIndexReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        adminservice.v1.CreateIndexRequest:
+            type: object
+            properties:
+                L1Idx:
+                    type: string
+                L2Idx:
+                    type: string
+                L3Idx:
+                    type: string
+        adminservice.v1.Endpoint:
+            type: object
+            properties:
+                id:
+                    type: string
+                desctiption:
+                    type: string
+                addr:
+                    type: string
+                L1Idx:
+                    type: string
+                L2Idx:
+                    type: string
+                L3Idx:
+                    type: string
+        adminservice.v1.GetEndpointReply:
+            type: object
+            properties:
+                endpoint:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/adminservice.v1.Endpoint'
+        adminservice.v1.ListEndpointReply:
+            type: object
+            properties:
+                endpoint:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/adminservice.v1.Endpoint'
+        adminservice.v1.ListIndexReply:
+            type: object
+            properties:
+                index:
+                    type: array
+                    items:
+                        type: string
+        adminservice.v1.ListNodeReply:
+            type: object
+            properties:
+                node:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/adminservice.v1.Node'
+        adminservice.v1.Node:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                status:
+                    type: integer
+                    format: enum
+                addr:
+                    type: string
+        adminservice.v1.RemoveEndpointReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        adminservice.v1.RemoveEndpointRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                addr:
+                    type: string
+        adminservice.v1.RemoveNodeReply:
+            type: object
+            properties:
+                success:
+                    type: boolean
+        adminservice.v1.RemoveNodeRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                addr:
+                    type: string
 tags:
-    - name: Greeter
+    - name: Operation

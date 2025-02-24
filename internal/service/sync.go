@@ -3,20 +3,20 @@ package service
 import (
 	"context"
 
-	v1 "helloworld/api/helloworld/v1"
-	"helloworld/internal/biz"
+	v1 "ipfs-store/api/admin-service/v1"
+	"ipfs-store/internal/biz"
 )
 
 // GreeterService is a greeter service.
-type GreeterService struct {
-	v1.UnimplementedGreeterServer
+type SyncService struct {
+	v1.UnimplementedSyncServer
 
 	uc *biz.GreeterUsecase
 }
 
 // NewGreeterService new a greeter service.
-func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
-	return &GreeterService{uc: uc}
+func NewSyncService(uc *biz.GreeterUsecase) *OperationService {
+	return &OperationService{uc: uc}
 }
 
 // SayHello implements helloworld.GreeterServer.
