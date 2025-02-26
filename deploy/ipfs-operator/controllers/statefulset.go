@@ -332,7 +332,7 @@ func (r *IpfsClusterReconciler) StatefulSet(
 						AccessModes: []corev1.PersistentVolumeAccessMode{
 							corev1.ReadWriteOnce,
 						},
-						Resources: corev1.ResourceRequirements{
+						Resources: corev1.VolumeResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceStorage: m.Spec.ClusterStorage,
 							},
@@ -347,7 +347,7 @@ func (r *IpfsClusterReconciler) StatefulSet(
 						AccessModes: []corev1.PersistentVolumeAccessMode{
 							corev1.ReadWriteOnce,
 						},
-						Resources: corev1.ResourceRequirements{
+						Resources: corev1.VolumeResourceRequirements{
 							Requests: corev1.ResourceList{
 								corev1.ResourceStorage: m.Spec.IpfsStorage,
 							},

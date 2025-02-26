@@ -254,7 +254,6 @@ func applyIPFSClusterK8sDefaults(conf *config.Config, storageMax string, peers [
 	conf.Bootstrap = config.BootstrapPeerStrings(peers)
 	conf.Addresses.API = config.Strings{"/ip4/0.0.0.0/tcp/5001"}
 	conf.Addresses.Gateway = config.Strings{"/ip4/0.0.0.0/tcp/8080"}
-	conf.Swarm.ConnMgr.HighWater = 2000
 	conf.Datastore.BloomFilterSize = 1048576
 	conf.Datastore.StorageMax = storageMax
 	conf.Addresses.Swarm = []string{"/ip4/0.0.0.0/tcp/4001", "/ip6/::/tcp/4001"}
@@ -295,8 +294,6 @@ func createTemplateConfig(
 
 	conf.Swarm.RelayClient = rc
 	conf.Datastore.BloomFilterSize = int(bloomFilterSize)
-	conf.Reprovider.Interval = reproviderInterval
-	conf.Reprovider.Strategy = reproviderStrategy
 
 	return
 }

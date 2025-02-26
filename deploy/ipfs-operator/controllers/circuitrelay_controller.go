@@ -342,10 +342,6 @@ func (r *CircuitRelayReconciler) configRelay(
 			ConnMgrHi:    4096,
 			ConnMgrGrace: 2 * time.Minute,
 		},
-		RelayV1: relaydaemon.RelayV1Config{
-			Enabled: false,
-			// Resources: relayv1.DefaultResources(),
-		},
 		RelayV2: relaydaemon.RelayV2Config{
 			Enabled:   true,
 			Resources: relayv2.DefaultResources(),
@@ -361,7 +357,6 @@ func (r *CircuitRelayReconciler) configRelay(
 	cfg.RelayV2.Resources.MaxReservations = 128
 	cfg.RelayV2.Resources.MaxCircuits = 16
 	cfg.RelayV2.Resources.BufferSize = 2048
-	cfg.RelayV2.Resources.MaxReservationsPerPeer = 4
 	cfg.RelayV2.Resources.MaxReservationsPerIP = 8
 	cfg.RelayV2.Resources.MaxReservationsPerASN = 32
 

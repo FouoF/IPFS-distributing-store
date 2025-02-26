@@ -50,7 +50,7 @@ BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 
 # Sets the versioning for our tool
-CONTROLLER_TOOLS_VERSION := v0.14.0
+CONTROLLER_TOOLS_VERSION := v0.16.0
 KUSTOMIZE_VERSION := v4.5.5
 KUSTOMIZE_MAJOR := v4
 
@@ -152,6 +152,9 @@ test-e2e-release: kuttl
 .PHONY: build
 build: generate fmt vet ## Build manager binary.
 	go build -o bin/manager main.go
+
+.PHONY: build-bin
+build-bin: go build -a -o manager main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
