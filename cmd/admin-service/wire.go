@@ -6,11 +6,11 @@
 package main
 
 import (
-	"helloworld/internal/biz"
-	"helloworld/internal/conf"
-	"helloworld/internal/data"
-	"helloworld/internal/server"
-	"helloworld/internal/service"
+	"ipfs-store/internal/biz"
+	"ipfs-store/internal/conf"
+	"ipfs-store/internal/data"
+	"ipfs-store/internal/server"
+	"ipfs-store/internal/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"

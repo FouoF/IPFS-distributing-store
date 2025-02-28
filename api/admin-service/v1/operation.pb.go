@@ -935,6 +935,7 @@ func (x *ListIndexReply) GetIndex() []string {
 	return nil
 }
 
+// node is storage entity
 type Node struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1003,6 +1004,7 @@ func (x *Node) GetAddr() string {
 	return ""
 }
 
+// endpoint is keepalived datasource
 type Endpoint struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`

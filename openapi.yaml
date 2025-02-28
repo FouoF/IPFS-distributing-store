@@ -4,7 +4,7 @@
 openapi: 3.0.3
 info:
     title: Operation API
-    description: The greeting service definition.
+    description: The operation service definition.
     version: 0.0.1
 paths:
     /admin/endpoint/add:
@@ -145,7 +145,6 @@ paths:
         get:
             tags:
                 - Operation
-            description: Sends a greeting
             operationId: Operation_ListNode
             responses:
                 "200":
@@ -229,6 +228,7 @@ components:
                     type: string
                 L3Idx:
                     type: string
+            description: endpoint is keepalived datasource
         adminservice.v1.GetEndpointReply:
             type: object
             properties:
@@ -269,6 +269,7 @@ components:
                     format: enum
                 addr:
                     type: string
+            description: node is storage entity
         adminservice.v1.RemoveEndpointReply:
             type: object
             properties:

@@ -36,7 +36,6 @@ type OperationHTTPServer interface {
 	GetEndpoint(context.Context, *GetEndpointRequest) (*GetEndpointReply, error)
 	ListEndpoint(context.Context, *ListEndpointRequest) (*ListEndpointReply, error)
 	ListIndex(context.Context, *ListIndexRequest) (*ListIndexReply, error)
-	// ListNode Sends a greeting
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	RemoveEndpoint(context.Context, *RemoveEndpointRequest) (*RemoveEndpointReply, error)
 	RemoveNode(context.Context, *RemoveNodeRequest) (*RemoveNodeReply, error)

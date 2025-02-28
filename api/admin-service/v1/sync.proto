@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package adminservice.v1;
 
-import "google/api/annotations.proto";
-
 option go_package = "ipfs-store/api/admin-service/v1;v1";
 
 // The greeting service definition.

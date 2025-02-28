@@ -34,9 +34,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// The greeting service definition.
+// The operation service definition.
 type OperationClient interface {
-	// Sends a greeting
 	ListNode(ctx context.Context, in *ListNodeRequest, opts ...grpc.CallOption) (*ListNodeReply, error)
 	AddNode(ctx context.Context, in *AddNodeRequest, opts ...grpc.CallOption) (*AddNodeReply, error)
 	RemoveNode(ctx context.Context, in *RemoveNodeRequest, opts ...grpc.CallOption) (*RemoveNodeReply, error)
@@ -150,9 +149,8 @@ func (c *operationClient) ListIndex(ctx context.Context, in *ListIndexRequest, o
 // All implementations must embed UnimplementedOperationServer
 // for forward compatibility.
 //
-// The greeting service definition.
+// The operation service definition.
 type OperationServer interface {
-	// Sends a greeting
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	AddNode(context.Context, *AddNodeRequest) (*AddNodeReply, error)
 	RemoveNode(context.Context, *RemoveNodeRequest) (*RemoveNodeReply, error)

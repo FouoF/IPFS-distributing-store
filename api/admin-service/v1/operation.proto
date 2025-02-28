@@ -6,9 +6,8 @@ import "google/api/annotations.proto";
 
 option go_package = "ipfs-store/api/admin-service/v1;v1";
 
-// The greeting service definition.
+// The operation service definition.
 service Operation {
-  // Sends a greeting
   rpc ListNode (ListNodeRequest) returns (ListNodeReply) {
     option (google.api.http) = {
       get: "/admin/node/list"
@@ -153,6 +152,7 @@ message ListIndexReply {
   repeated string index = 1;
 }
 
+//node is storage entity
 message Node {
   string id = 1;
   string name = 2;
@@ -160,6 +160,7 @@ message Node {
   string addr = 4;
 }
 
+//endpoint is keepalived datasource
 message Endpoint {
   string id = 1;
   string desctiption = 2;
