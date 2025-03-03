@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package adminservice.v1;
+
+option go_package = "ipfs-store/api/admin-service/v1;v1";
+
+message Index {
+  string name = 1;
+  string L1 = 2;
+  string L2 = 3;
+  string leafname = 4;
+}
+
+//node is storage entity
+message Node {
+    string id = 1;
+    string name = 2;
+    Status status = 3;
+    string addr = 4;
+}
+
+enum Status {
+    UNKNOWN = 0;
+    ONLINE = 1;
+    OFFLINE = 2;
+}
+
+//endpoint is keepalived datasource
+message Endpoint {
+    string id = 1;
+    string desctiption = 2;
+    string addr = 3;
+    Index  index = 4;
+}

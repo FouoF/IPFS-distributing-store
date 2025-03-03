@@ -3,6 +3,7 @@ syntax = "proto3";
 package adminservice.v1;
 
 import "google/api/annotations.proto";
+import "types.proto";
 
 option go_package = "ipfs-store/api/admin-service/v1;v1";
 
@@ -78,12 +79,10 @@ message ListNodeReply {
 }
 
 message AddNodeRequest {
-  string name = 1;
-  string addr = 2;
+  Node node = 1;
 }
 
 message AddNodeReply {
-  bool success = 1;
 }
 
 message RemoveNodeRequest {
@@ -92,7 +91,6 @@ message RemoveNodeRequest {
 }
 
 message RemoveNodeReply {
-  bool success = 1;
 }
 
 message ListEndpointRequest {
@@ -104,9 +102,7 @@ message ListEndpointReply {
 }
 
 message AddEndpointRequest {
-  string name = 1;
-  string desctiption = 2;
-  string addr = 3;
+  Endpoint endpoint = 1;
 }
 
 message AddEndpointReply {
@@ -114,18 +110,14 @@ message AddEndpointReply {
 }
 
 message RemoveEndpointRequest {
-  string name = 1;
-  string addr = 2;
+  Index index = 1;
 }
 
 message RemoveEndpointReply {
-  bool success = 1;
 }
 
 message GetEndpointRequest {
-  string L1Idx = 1;
-  string L2Idx = 2;
-  string L3Idx = 3;
+  Index index = 1;
 }
 
 message GetEndpointReply {
@@ -133,45 +125,16 @@ message GetEndpointReply {
 }
 
 message CreateIndexRequest {
-  string L1Idx = 1;
-  string L2Idx = 2;
-  string L3Idx = 3;
+  Index index = 1;
 }
 
 message CreateIndexReply {
-  bool success = 1;
 }
 
 message ListIndexRequest {
-  string L1Idx = 1;
-  string L2Idx = 2;
-  string L3Idx = 3;
+  Index index = 1;
 }
 
 message ListIndexReply {
   repeated string index = 1;
-}
-
-//node is storage entity
-message Node {
-  string id = 1;
-  string name = 2;
-  Status status = 3;
-  string addr = 4;
-}
-
-//endpoint is keepalived datasource
-message Endpoint {
-  string id = 1;
-  string desctiption = 2;
-  string addr = 3;
-  string L1Idx = 4;
-  string L2Idx = 5;
-  string L3Idx = 6;
-}
-
-enum Status {
-  UNKNOWN = 0;
-  ONLINE = 1;
-  OFFLINE = 2;
 }

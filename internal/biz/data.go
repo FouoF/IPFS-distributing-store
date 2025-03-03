@@ -47,3 +47,7 @@ func (uc *DataUsecase) AddLeaf(ctx context.Context, idx datastore.Index, cid str
 	uc.log.WithContext(ctx).Infof("addleaf: %v", idx)
 	return uc.repo.AddLeaf(ctx, idx, cid)
 }
+
+func (uc *DataUsecase) V1ToDatastore(idx *v1.GetEndpointRequest) datastore.Index {
+	return datastore.Index{Name: idx.L1Idx, L1: idx.L2Idx, L2: idx.L3Idx}
+}
