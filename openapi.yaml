@@ -31,15 +31,19 @@ paths:
                 - Operation
             operationId: Operation_GetEndpoint
             parameters:
-                - name: L1Idx
+                - name: index.name
                   in: query
                   schema:
                     type: string
-                - name: L2Idx
+                - name: index.L1
                   in: query
                   schema:
                     type: string
-                - name: L3Idx
+                - name: index.L2
+                  in: query
+                  schema:
+                    type: string
+                - name: index.leafname
                   in: query
                   schema:
                     type: string
@@ -104,15 +108,19 @@ paths:
                 - Operation
             operationId: Operation_ListIndex
             parameters:
-                - name: L1Idx
+                - name: index.name
                   in: query
                   schema:
                     type: string
-                - name: L2Idx
+                - name: index.L1
                   in: query
                   schema:
                     type: string
-                - name: L3Idx
+                - name: index.L2
+                  in: query
+                  schema:
+                    type: string
+                - name: index.leafname
                   in: query
                   schema:
                     type: string
@@ -181,38 +189,24 @@ components:
         adminservice.v1.AddEndpointRequest:
             type: object
             properties:
-                name:
-                    type: string
-                desctiption:
-                    type: string
-                addr:
-                    type: string
+                endpoint:
+                    $ref: '#/components/schemas/adminservice.v1.Endpoint'
         adminservice.v1.AddNodeReply:
             type: object
-            properties:
-                success:
-                    type: boolean
+            properties: {}
         adminservice.v1.AddNodeRequest:
             type: object
             properties:
-                name:
-                    type: string
-                addr:
-                    type: string
+                node:
+                    $ref: '#/components/schemas/adminservice.v1.Node'
         adminservice.v1.CreateIndexReply:
             type: object
-            properties:
-                success:
-                    type: boolean
+            properties: {}
         adminservice.v1.CreateIndexRequest:
             type: object
             properties:
-                L1Idx:
-                    type: string
-                L2Idx:
-                    type: string
-                L3Idx:
-                    type: string
+                index:
+                    $ref: '#/components/schemas/adminservice.v1.Index'
         adminservice.v1.Endpoint:
             type: object
             properties:
@@ -222,12 +216,8 @@ components:
                     type: string
                 addr:
                     type: string
-                L1Idx:
-                    type: string
-                L2Idx:
-                    type: string
-                L3Idx:
-                    type: string
+                index:
+                    $ref: '#/components/schemas/adminservice.v1.Index'
             description: endpoint is keepalived datasource
         adminservice.v1.GetEndpointReply:
             type: object
@@ -236,6 +226,17 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/adminservice.v1.Endpoint'
+        adminservice.v1.Index:
+            type: object
+            properties:
+                name:
+                    type: string
+                L1:
+                    type: string
+                L2:
+                    type: string
+                leafname:
+                    type: string
         adminservice.v1.ListEndpointReply:
             type: object
             properties:
@@ -272,21 +273,15 @@ components:
             description: node is storage entity
         adminservice.v1.RemoveEndpointReply:
             type: object
-            properties:
-                success:
-                    type: boolean
+            properties: {}
         adminservice.v1.RemoveEndpointRequest:
             type: object
             properties:
-                name:
-                    type: string
-                addr:
-                    type: string
+                index:
+                    $ref: '#/components/schemas/adminservice.v1.Index'
         adminservice.v1.RemoveNodeReply:
             type: object
-            properties:
-                success:
-                    type: boolean
+            properties: {}
         adminservice.v1.RemoveNodeRequest:
             type: object
             properties:

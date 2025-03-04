@@ -3,7 +3,7 @@ syntax = "proto3";
 package adminservice.v1;
 
 import "google/api/annotations.proto";
-import "types.proto";
+import "admin-service/v1/types.proto";
 
 option go_package = "ipfs-store/api/admin-service/v1;v1";
 
