@@ -102,13 +102,13 @@
     <h1 class="text-2xl font-bold">Storage Distribution Admin</h1>
   </header>
   <nav class="p-4">
-    <button id="datasourcesTab" class="bg-secondary text-secondary-foreground py-2 px-4 rounded-lg hover:bg-secondary/80">Datasources</button>
+    <button id="endpointsTab" class="bg-secondary text-secondary-foreground py-2 px-4 rounded-lg hover:bg-secondary/80">endpoints</button>
     <button id="nodesTab" class="bg-secondary text-secondary-foreground py-2 px-4 rounded-lg hover:bg-secondary/80">Nodes</button>
     <button id="dataQueryTab" class="bg-secondary text-secondary-foreground py-2 px-4 rounded-lg hover:bg-secondary/80">Data Query</button>
   </nav>
   <main class="flex-1 p-4">
-    <section id="datasources" class="bg-card p-4 rounded-lg">
-      <h2 class="text-lg font-semibold mb-2">Datasources</h2>
+    <section id="endpoints" class="bg-card p-4 rounded-lg">
+      <h2 class="text-lg font-semibold mb-2">endpoints</h2>
       <div class="flex items-center justify-between py-2 border-b border-border">
         <span class="font-semibold">Data Source</span>
         <span class="font-semibold">Data Source Type</span>
@@ -132,7 +132,7 @@
           </div>
         </li>
       </ul>
-      <button class="bg-accent text-accent-foreground py-2 px-4 mt-4 rounded-lg hover:bg-accent/80">Add Datasource</button>
+      <button class="bg-accent text-accent-foreground py-2 px-4 mt-4 rounded-lg hover:bg-accent/80">Add endpoint</button>
     </section>
     <section id="nodes" class="bg-card p-4 rounded-lg hidden">
       <h2 class="text-lg font-semibold mb-2">Nodes</h2>
@@ -219,23 +219,23 @@
 </div>
 
 <script>
-  const datasourcesTab = document.getElementById('datasourcesTab');
+  const endpointsTab = document.getElementById('endpointsTab');
   const nodesTab = document.getElementById('nodesTab');
   const dataQueryTab = document.getElementById('dataQueryTab');
-  const datasourcesSection = document.getElementById('datasources');
+  const endpointsSection = document.getElementById('endpoints');
   const nodesSection = document.getElementById('nodes');
   const dataQuerySection = document.getElementById('dataQuery');
   const showSection = (section) => {
-    datasourcesSection.classList.add('hidden');
+    endpointsSection.classList.add('hidden');
     nodesSection.classList.add('hidden');
     dataQuerySection.classList.add('hidden');
     section.classList.remove('hidden');
   };
-  datasourcesTab.addEventListener('click', () => showSection(datasourcesSection));
+  endpointsTab.addEventListener('click', () => showSection(endpointsSection));
   nodesTab.addEventListener('click', () => showSection(nodesSection));
   dataQueryTab.addEventListener('click', () => showSection(dataQuerySection));
-  // Default to showing the Datasources section
-  showSection(datasourcesSection);
+  // Default to showing the endpoints section
+  showSection(endpointsSection);
   const level1Select = document.getElementById('level1Select');
   const level2Container = document.getElementById('level2Container');
   const level2Select = document.getElementById('level2Select');
@@ -261,51 +261,51 @@
   });
 
 // 获取数据源列表
-async function getDatasources() {
-  const response = await fetch(`api/v1/datasources`);
+async function getendpoints() {
+  const response = await fetch(`api/v1/endpoints`);
   if (!response.ok) {
-    throw new Error('Failed to fetch datasources');
+    throw new Error('Failed to fetch endpoints');
   }
   return await response.json();
 }
 
 // 添加数据源
-async function addDatasource(datasource) {
-  const response = await fetch(`${API_BASE_URL}/datasources`, {
+async function addendpoint(endpoint) {
+  const response = await fetch(`${API_BASE_URL}/endpoints`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(datasource),
+    body: JSON.stringify(endpoint),
   });
   if (!response.ok) {
-    throw new Error('Failed to add datasource');
+    throw new Error('Failed to add endpoint');
   }
   return await response.json();
 }
 
 // 编辑数据源
-async function updateDatasource(id, datasource) {
-  const response = await fetch(`${API_BASE_URL}/datasources/${id}`, {
+async function updateendpoint(id, endpoint) {
+  const response = await fetch(`${API_BASE_URL}/endpoints/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(datasource),
+    body: JSON.stringify(endpoint),
   });
   if (!response.ok) {
-    throw new Error('Failed to update datasource');
+    throw new Error('Failed to update endpoint');
   }
   return await response.json();
 }
 
 // 删除数据源
-async function deleteDatasource(id) {
-  const response = await fetch(`${API_BASE_URL}/datasources/${id}`, {
+async function deleteendpoint(id) {
+  const response = await fetch(`${API_BASE_URL}/endpoints/${id}`, {
     method: 'DELETE',
   });
   if (!response.ok) {
-    throw new Error('Failed to delete datasource');
+    throw new Error('Failed to delete endpoint');
   }
 }
 

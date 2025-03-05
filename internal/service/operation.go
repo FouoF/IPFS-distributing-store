@@ -18,7 +18,6 @@ func NewOperationService(uc *biz.OperationUsecase, du *biz.DataUsecase) *Operati
 }
 
 func (s *OperationService) ListNode(ctx context.Context, req *v1.ListNodeRequest) (*v1.ListNodeReply, error) {
-	// 实现逻辑：列出节点
 	nodes, err := s.uc.ListNodes(ctx)
 	if err != nil {
 		return nil, err
@@ -27,12 +26,12 @@ func (s *OperationService) ListNode(ctx context.Context, req *v1.ListNodeRequest
 }
 
 func (s *OperationService) AddNode(ctx context.Context, req *v1.AddNodeRequest) (*v1.AddNodeReply, error) {
-	n := v1.Node{Name: req.Name, Addr: req.Addr, Status: v1.Status_OFFLINE}
+	n := v1.Node{Name: req.Node.Name, Addr: req.Node.Addr, Status: v1.Status_OFFLINE}
 	err := s.uc.AddNode(ctx, &n)
 	if err != nil {
 		return nil, err
 	}
-	return &v1.AddNodeReply{Success: true}, nil
+	return &v1.AddNodeReply{}, nil
 }
 
 func (s *OperationService) RemoveNode(ctx context.Context, req *v1.RemoveNodeRequest) (*v1.RemoveNodeReply, error) {
@@ -40,7 +39,7 @@ func (s *OperationService) RemoveNode(ctx context.Context, req *v1.RemoveNodeReq
 	if err != nil {
 		return nil, err
 	}
-	return &v1.RemoveNodeReply{Success: true}, nil
+	return &v1.RemoveNodeReply{}, nil
 }
 
 func (s *OperationService) ListEndpoint(ctx context.Context, req *v1.ListEndpointRequest) (*v1.ListEndpointReply, error) {
@@ -52,7 +51,7 @@ func (s *OperationService) ListEndpoint(ctx context.Context, req *v1.ListEndpoin
 }
 
 func (s *OperationService) GetEndpoint(ctx context.Context, req *v1.GetEndpointRequest) (*v1.GetEndpointReply, error) {
-	node, err := s.du.GetNode(ctx, s.du.V1ToDatastore(req))
+	node, err := s.du.GetNode(ctx, s.du.V1ToDatastore(req.Index))
 	endpoint, err := s.uc.GetEndpoint(ctx, node.Name)
 	var endpoints []*v1.Endpoint
 	endpoints = append(endpoints, endpoint)
@@ -63,37 +62,44 @@ func (s *OperationService) GetEndpoint(ctx context.Context, req *v1.GetEndpointR
 }
 
 func (s *OperationService) AddEndpoint(ctx context.Context, req *v1.AddEndpointRequest) (*v1.AddEndpointReply, error) {
-	endpoint := &v1.Endpoint{Name: req.Name, Addr: req.Addr, Desctiption: req.Desctiption}
-	err := s.uc.AddEndpoint(ctx, endpoint)
+	err := s.uc.AddEndpoint(ctx, req.Endpoint)
 	if err != nil {
 		return nil, err
 	}
-	return &AddEndpointReply{EndpointId: endpointID}, nil
+	return &v1.AddEndpointReply{}, nil
 }
 
-func (s *OperationService) RemoveEndpoint(ctx context.Context, req *RemoveEndpointRequest) (*RemoveEndpointReply, error) {
-	// 实现逻辑：删除端点
-	err := s.du.RemoveEndpoint(ctx, req.EndpointId)
+func (s *OperationService) RemoveEndpoint(ctx context.Context, req *v1.RemoveEndpointRequest) (*v1.RemoveEndpointReply, error) {
+	didx := s.du.V1ToDatastore(req.Index)
+	node, err := s.du.GetNode(ctx ,didx)
 	if err != nil {
 		return nil, err
 	}
-	return &RemoveEndpointReply{}, nil
+	err = s.uc.DeleteEndpoint(ctx, node.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.RemoveEndpointReply{}, nil
 }
 
-func (s *OperationService) CreateIndex(ctx context.Context, req *CreateIndexRequest) (*CreateIndexReply, error) {
-	// 实现逻辑：创建索引
-	indexID, err := s.du.CreateIndex(ctx, req.Index)
+func (s *OperationService) CreateIndex(ctx context.Context, req *v1.CreateIndexRequest) (*v1.CreateIndexReply, error) {
+	didx := s.du.V1ToDatastore(req.Index)
+	err := s.du.AddIndex(ctx, didx)
 	if err != nil {
 		return nil, err
 	}
-	return &CreateIndexReply{IndexId: indexID}, nil
+	return &v1.CreateIndexReply{}, nil
 }
 
-func (s *OperationService) ListIndex(ctx context.Context, req *ListIndexRequest) (*ListIndexReply, error) {
-	// 实现逻辑：列出索引
-	indices, err := s.du.ListIndices(ctx)
+func (s *OperationService) ListIndex(ctx context.Context, req *v1.ListIndexRequest) (*v1.ListIndexReply, error) {
+	didx := s.du.V1ToDatastore(req.Index)
+	node, err := s.du.GetNode(ctx, didx)
+	indices := make([]string, 0)
+	for _, v := range node.Children {
+		indices = append(indices, v.Name)
+	}
 	if err != nil {
 		return nil, err
 	}
-	return &ListIndexReply{Indices: indices}, nil
+	return &v1.ListIndexReply{Index: indices}, nil
 }

@@ -40,9 +40,7 @@ func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoi
 		Addr:        endpoint.Addr,
 		Desctiption: endpoint.Desctiption,
 		Id:          endpoint.Id,
-		L1Idx:       endpoint.L1Idx,
-		L2Idx:       endpoint.L2Idx,
-		L3Idx:       endpoint.L3Idx,
+		Index:       endpoint.Index,
 	}
 	return nil
 }
@@ -76,6 +74,10 @@ func (uc *OperationUsecase) DeleteEndpoint(ctx context.Context, addr string) err
 func (uc *OperationUsecase) AddNode(ctx context.Context, node *v1.Node) error {
 	uc.log.WithContext(ctx).Infof("add node: %v", node)
 	uc.nodeList.lock.Lock()
+	if uc.nodeList.nodes[node.Addr] != nil {
+		log.Errorf("node already exists")
+		return nil
+	}
 	defer uc.nodeList.lock.Unlock()
 	uc.nodeList.nodes[node.Addr] = &v1.Node{
 		Addr: node.Addr,

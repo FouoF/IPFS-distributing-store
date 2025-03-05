@@ -14,11 +14,10 @@ type server struct {
 }
 
 func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, stream v1.Sync_SyncDataFromEndpointServer) error {
+	idx := v1.Index{Name: "testname", L1: "level1", L2: "level2", Leafname: "leafname"}
 	for i := 0; i < 5; i++ {
 		fileChunk := &v1.FileChunk{
-			L1Idx:        "level1",
-			L2Idx:        "level2",
-			L3Idx:        "level3",
+			Index: &idx,
 			ChunkIndex:   int64(i),
 			Data:         []byte(fmt.Sprintf("file chunk %d", i)),
 			IsFinalChunk: i == 4,
