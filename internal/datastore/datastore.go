@@ -22,6 +22,7 @@ type Node struct {
 
 func (s *TreeStore) AddIndex(idx Index) error {
 	cur := s.root
+	//一个index至少要包含一个有效字段
 	if idx.Name == "" {
 		return errors.New("name is empty")
 	}
@@ -55,6 +56,7 @@ func (s *TreeStore) AddLeaf(idx Index, cid string) error {
 	return nil
 }
 
+//查找等于指定key的节点
 func (s *TreeStore) findNode(cur *Node, key string) *Node {
 	for _, v := range cur.Children {
 		if v.Name == key {
@@ -83,4 +85,25 @@ func NewTreeStore() *TreeStore {
 	return &TreeStore{
 		root: &Node{Name: "root"},
 	}
+}
+
+func NewTreeStoreWithData() *TreeStore {
+	TreeStore := NewTreeStore()
+	TreeStore.AddIndex(Index{Name: "监控", L1: "一号楼", L2: "1号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "监控", L1: "一号楼", L2: "2号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "监控", L1: "二号楼", L2: "1号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "监控", L1: "二号楼", L2: "2号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "心率", L1: "1号房间", L2: "1号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "心率", L1: "2号房间", L2: "1号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "心率", L1: "1号房间", L2: "2号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "心率", L1: "2号房间", L2: "2号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "血压", L1: "1号房间", L2: "1号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "血压", L1: "2号房间", L2: "1号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "血压", L1: "1号房间", L2: "2号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "血压", L1: "2号房间", L2: "2号床", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "温度", L1: "一号楼", L2: "1号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "温度", L1: "一号楼", L2: "2号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "温度", L1: "二号楼", L2: "1号房间", LeafName: ""})
+	TreeStore.AddIndex(Index{Name: "温度", L1: "二号楼", L2: "2号房间", LeafName: ""})
+	return TreeStore
 }

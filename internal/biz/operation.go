@@ -22,11 +22,14 @@ type NodeList struct {
 type OperationUsecase struct {
 	endpointList EndpointList
 	nodeList     NodeList
-	log       *log.Helper
+	log          *log.Helper
 }
 
 func NewOperationUsecase(logger log.Logger) *OperationUsecase {
-	return &OperationUsecase{log: log.NewHelper(logger)}
+	return &OperationUsecase{
+		log: log.NewHelper(logger), 
+		endpointList: EndpointList{endpoints: make(map[string]*v1.Endpoint)}, 
+		nodeList: NodeList{nodes: make(map[string]*v1.Node)}}
 }
 
 func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoint) error {
@@ -46,6 +49,7 @@ func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoi
 }
 
 func (uc *OperationUsecase) ListEndpoints(ctx context.Context) ([]*v1.Endpoint, error) {
+	uc.log.WithContext(ctx).Infof("list endpoints")
 	uc.endpointList.lock.RLock()
 	defer uc.endpointList.lock.RUnlock()
 	var eps []*v1.Endpoint
@@ -56,6 +60,7 @@ func (uc *OperationUsecase) ListEndpoints(ctx context.Context) ([]*v1.Endpoint, 
 }
 
 func (uc *OperationUsecase) GetEndpoint(ctx context.Context, addr string) (*v1.Endpoint, error) {
+	uc.log.WithContext(ctx).Infof("get endpoint: %v", addr)
 	uc.endpointList.lock.RLock()
 	defer uc.endpointList.lock.RUnlock()
 	return uc.endpointList.endpoints[addr], nil
@@ -63,7 +68,7 @@ func (uc *OperationUsecase) GetEndpoint(ctx context.Context, addr string) (*v1.E
 
 func (uc *OperationUsecase) DeleteEndpoint(ctx context.Context, addr string) error {
 	uc.log.WithContext(ctx).Infof("delete endpoint: %v", addr)
-	if err := uc.closeConnection(ctx, addr) ; err != nil {
+	if err := uc.closeConnection(ctx, addr); err != nil {
 		return err
 	}
 	uc.endpointList.lock.Lock()
@@ -74,11 +79,11 @@ func (uc *OperationUsecase) DeleteEndpoint(ctx context.Context, addr string) err
 func (uc *OperationUsecase) AddNode(ctx context.Context, node *v1.Node) error {
 	uc.log.WithContext(ctx).Infof("add node: %v", node)
 	uc.nodeList.lock.Lock()
+	defer uc.nodeList.lock.Unlock()
 	if uc.nodeList.nodes[node.Addr] != nil {
 		log.Errorf("node already exists")
 		return nil
 	}
-	defer uc.nodeList.lock.Unlock()
 	uc.nodeList.nodes[node.Addr] = &v1.Node{
 		Addr: node.Addr,
 		Id:   node.Id,
@@ -88,6 +93,7 @@ func (uc *OperationUsecase) AddNode(ctx context.Context, node *v1.Node) error {
 }
 
 func (uc *OperationUsecase) ListNodes(ctx context.Context) ([]*v1.Node, error) {
+	uc.log.WithContext(ctx).Infof("list Nodes")
 	uc.nodeList.lock.RLock()
 	defer uc.nodeList.lock.RUnlock()
 	var nodes []*v1.Node
@@ -98,6 +104,7 @@ func (uc *OperationUsecase) ListNodes(ctx context.Context) ([]*v1.Node, error) {
 }
 
 func (uc *OperationUsecase) GetNode(ctx context.Context, addr string) (*v1.Node, error) {
+	uc.log.WithContext(ctx).Infof("Get Node: %v", addr)
 	uc.nodeList.lock.RLock()
 	defer uc.nodeList.lock.RUnlock()
 	return uc.nodeList.nodes[addr], nil

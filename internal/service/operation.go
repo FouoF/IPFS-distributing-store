@@ -26,7 +26,7 @@ func (s *OperationService) ListNode(ctx context.Context, req *v1.ListNodeRequest
 }
 
 func (s *OperationService) AddNode(ctx context.Context, req *v1.AddNodeRequest) (*v1.AddNodeReply, error) {
-	n := v1.Node{Name: req.Node.Name, Addr: req.Node.Addr, Status: v1.Status_OFFLINE}
+	n := v1.Node{Id: req.Node.Id, Name: req.Node.Name, Addr: req.Node.Addr, Status: v1.Status_OFFLINE}
 	err := s.uc.AddNode(ctx, &n)
 	if err != nil {
 		return nil, err
