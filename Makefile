@@ -80,3 +80,5 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
+
+# run in windows .\bin\admin-service.exe -conf C:\Users\FF\go\IPFS-distributing-store\configs\config.yaml

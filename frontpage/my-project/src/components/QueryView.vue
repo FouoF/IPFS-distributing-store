@@ -1,0 +1,256 @@
+<template>
+  <div>
+    <div class="header-container">
+      <h1>数据查询</h1>
+      <!-- <el-button type="primary" @click="">添加索引</el-button> -->
+    </div>
+
+    <el-row :gutter="20">
+      <el-col :span="8">
+        <el-select v-model="selectedOption1" placeholder="请选择数据板块" @change="fetchOptions2">
+          <el-option v-for="option in options1" :key="option.id" :label="option.name" :value="option.id"></el-option>
+        </el-select>
+      </el-col>
+
+      <el-col :span="8">
+        <el-select v-model="selectedOption2" placeholder="请选择索引" @change="fetchOptions3">
+          <el-option v-for="option in options2" :key="option.id" :label="option.name" :value="option.id"></el-option>
+        </el-select>
+      </el-col>
+
+      <el-col :span="8">
+        <el-select v-model="selectedOption3" placeholder="请选择索引" @change="fetchData">
+          <el-option v-for="option in options3" :key="option.id" :label="option.name" :value="option.id"></el-option>
+        </el-select>
+      </el-col>
+    </el-row>
+
+    <el-table v-if="records.length" :data="records" style="width: 100%">
+      <el-table-column prop="name" label="Record Name"></el-table-column>
+      <el-table-column label="Action" width="180">
+        <template #default="{ row }">
+          <el-button @click="downloadRecord(row.id)" type="primary" size="small">Download</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted } from 'vue';
+import {listIndex} from '@/api'; // 引入 API 接口
+
+export default {
+  setup() {
+    const selectedOption1 = ref('');
+    const selectedOption2 = ref('');
+    const selectedOption3 = ref('');
+    const options1 = ref([]);
+    const options2 = ref([]);
+    const options3 = ref([]);
+    const records = ref([]);
+
+    // 获取选项1的接口
+    const fetchOptions1 = async () => {
+      try {
+        const index = { name: '', l1: '', l2: '', leafname: '' };
+        const response = await listIndex(index); // 假设你有这个接口
+        options1.value = response.data;
+        if (options1.value.length > 0) {
+          selectedOption1.value = options1.value[0].id; // 默认选择第一个选项
+          fetchOptions2(); // 获取第二个下拉框的选项
+        }
+      } catch (error) {
+        console.error('Failed to fetch options1', error);
+      }
+    };
+
+    // 获取选项2的接口（根据选项1的值获取）
+    const fetchOptions2 = async () => {
+      if (!selectedOption1.value) return;
+      try {
+        const index = { name: '', l1: '', l2: '', leafname: '' };
+        index.name = selectedOption1.value;
+        const response = await listIndex(index); // 假设你有这个接口
+        options2.value = response.data;
+        if (options2.value.length > 0) {
+          selectedOption2.value = options2.value[0].id; // 默认选择第一个选项
+          fetchOptions3(); // 获取第三个下拉框的选项
+        }
+      } catch (error) {
+        console.error('Failed to fetch options2', error);
+      }
+    };
+
+    // 获取选项3的接口（根据选项1和选项2的值获取）
+    const fetchOptions3 = async () => {
+      if (!selectedOption1.value || !selectedOption2.value) return;
+      try {
+        const index = { name: '', l1: '', l2: '', leafname: '' };
+        index.name = selectedOption1.value;
+        index.l1 = selectedOption2.value;
+        const response = await listIndex(index); // 假设你有这个接口
+        options3.value = response.data;
+        if (options3.value.length > 0) {
+          selectedOption3.value = options3.value[0].id; // 默认选择第一个选项
+          fetchData(); // 获取数据
+        }
+      } catch (error) {
+        console.error('Failed to fetch options3', error);
+      }
+    };
+
+    // 获取记录的接口
+    const fetchData = async () => {
+      if (selectedOption1.value && selectedOption2.value && selectedOption3.value) {
+        try {
+          const index = { name: '', l1: '', l2: '', leafname: '' };
+          index.name = selectedOption1.value;
+          index.l1 = selectedOption2.value;
+          index.l2 = selectedOption3.value;
+          const response = await listIndex(index); // 假设你有这个接口
+          records.value = response.data;
+        } catch (error) {
+          console.error('Failed to fetch records', error);
+        }
+      } else {
+        records.value = [];
+      }
+    };
+
+    // 下载记录的逻辑
+    const downloadRecord = (id) => {
+      console.log('Downloading record', id);
+      // 处理下载逻辑
+    };
+
+    // 页面加载时获取选项
+    onMounted(() => {
+      fetchOptions1(); // 获取第一个下拉框的选项
+    });
+
+    return {
+      selectedOption1,
+      selectedOption2,
+      selectedOption3,
+      options1,
+      options2,
+      options3,
+      records,
+      fetchData,
+      downloadRecord
+    };
+  }
+};
+</script>
+
+<style scoped>
+.header-container {
+  display: flex;
+  justify-content: space-between; /* 将标题和按钮放到两侧 */
+  align-items: center; /* 垂直居中对齐 */
+  height: 50px; /* 设置容器固定高度，避免内容增加导致高度过高 */
+  padding: 0 20px; /* 为左右两侧添加内边距，避免紧贴边缘 */
+  background-color: #f4fcf7; /* 背景色 */
+  margin-bottom: 20px; /* 给下面的内容添加一些间距 */
+}
+/* 页面容器样式 */
+div {
+  padding: 20px;
+  background-color: #f4f7fc;
+  font-family: 'Arial', sans-serif;
+}
+
+/* 标题样式 */
+h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* 布局容器样式 */
+.el-row {
+  margin-bottom: 30px;
+}
+
+/* 每一列的间隔 */
+.el-col {
+  padding: 10px;
+}
+
+/* 聚焦时下拉框样式 */
+.el-select:focus {
+  border-color: #409eff;
+}
+
+/* 表格样式 */
+.el-table {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* 表格头部样式 */
+.el-table th {
+  background-color: #f2f6fc;
+  color: #333;
+  font-weight: bold;
+}
+
+/* 表格内容行样式 */
+.el-table td {
+  padding: 15px;
+  color: #666;
+}
+
+/* 操作按钮样式 */
+.el-button {
+  background-color: #409eff;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+/* 鼠标悬停按钮样式 */
+.el-button:hover {
+  background-color: #66b1ff;
+}
+
+/* 弹出框样式 */
+.el-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* 表单项样式 */
+.el-form-item {
+  margin-bottom: 20px;
+}
+
+/* 表单输入框样式 */
+.el-input {
+  border-radius: 4px;
+  background-color: #f7f7f7;
+  border: 1px solid #dcdfe6;
+  transition: border-color 0.3s ease;
+}
+
+/* 聚焦时输入框样式 */
+.el-input:focus {
+  border-color: #409eff;
+}
+
+/* 按钮内边距与间距 */
+.el-button + .el-button {
+  margin-left: 10px;
+}
+
+/* 当没有数据时的提示文字 */
+.el-table--empty span {
+  color: #b5b5b5;
+  font-size: 14px;
+  text-align: center;
+}
+</style>
