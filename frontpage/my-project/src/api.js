@@ -3,7 +3,7 @@ import axios from 'axios';
 // 配置 axios 实例
 const api = axios.create({
   // baseURL: 'admin',// 假设 nginx 配置了转发到后端服务的路径
-  baseURL: 'http://localhost:8000/admin', 
+  baseURL: 'http://localhost:8000/admin', //test url
   timeout: 10000, // 请求超时设置
   headers: {
     'Content-Type': 'application/json',
@@ -41,9 +41,17 @@ export const removeEndpoint = (endpointData) => {
 };
 
 export const listIndex = (indexData) => {
-  return api.get('/index/list', indexData);
-};
+  const params = new URLSearchParams();
 
+  // 将 index 对象展开成 key=value 的格式
+  for (const key in indexData.index) {
+    if (indexData.index[key]) {  // 只添加非空值
+      params.append(`index.${key}`, indexData.index[key]);
+    }
+  }
+
+  return api.get('/index/list', { params });
+};
 export const createIndex = (indexData) => {
   return api.post('/index/create', indexData);
 };

@@ -8,19 +8,19 @@
     <el-row :gutter="20">
       <el-col :span="8">
         <el-select v-model="selectedOption1" placeholder="请选择数据板块" @change="fetchOptions2">
-          <el-option v-for="option in options1" :key="option.id" :label="option.name" :value="option.id"></el-option>
+          <el-option v-for="option in options1" :key="option" :label="option" :value="option"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="8">
         <el-select v-model="selectedOption2" placeholder="请选择索引" @change="fetchOptions3">
-          <el-option v-for="option in options2" :key="option.id" :label="option.name" :value="option.id"></el-option>
+          <el-option v-for="option in options2" :key="option" :label="option" :value="option"></el-option>
         </el-select>
       </el-col>
 
       <el-col :span="8">
         <el-select v-model="selectedOption3" placeholder="请选择索引" @change="fetchData">
-          <el-option v-for="option in options3" :key="option.id" :label="option.name" :value="option.id"></el-option>
+          <el-option v-for="option in options3" :key="option" :label="option" :value="option"></el-option>
         </el-select>
       </el-col>
     </el-row>
@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import {listIndex} from '@/api'; // 引入 API 接口
+import { ref, onMounted, watch } from 'vue';
+import { listIndex } from '@/api'; // 引入 API 接口
 
 export default {
   setup() {
@@ -53,11 +53,12 @@ export default {
     // 获取选项1的接口
     const fetchOptions1 = async () => {
       try {
-        const index = { name: '', l1: '', l2: '', leafname: '' };
+        const index = { index: { name: '', L1: '', L2: '', leafname: '' } };
+        console.log(index);
         const response = await listIndex(index); // 假设你有这个接口
-        options1.value = response.data;
+        options1.value = response.data.index;
         if (options1.value.length > 0) {
-          selectedOption1.value = options1.value[0].id; // 默认选择第一个选项
+          selectedOption1.value = options1.value[0]; // 默认选择第一个选项
           fetchOptions2(); // 获取第二个下拉框的选项
         }
       } catch (error) {
@@ -69,12 +70,12 @@ export default {
     const fetchOptions2 = async () => {
       if (!selectedOption1.value) return;
       try {
-        const index = { name: '', l1: '', l2: '', leafname: '' };
-        index.name = selectedOption1.value;
+        const index = { index: { name: selectedOption1.value, L1: '', L2: '', leafname: '' } };
+        console.log(index);
         const response = await listIndex(index); // 假设你有这个接口
-        options2.value = response.data;
+        options2.value = response.data.index;
         if (options2.value.length > 0) {
-          selectedOption2.value = options2.value[0].id; // 默认选择第一个选项
+          selectedOption2.value = options2.value[0]; // 默认选择第一个选项
           fetchOptions3(); // 获取第三个下拉框的选项
         }
       } catch (error) {
@@ -86,13 +87,12 @@ export default {
     const fetchOptions3 = async () => {
       if (!selectedOption1.value || !selectedOption2.value) return;
       try {
-        const index = { name: '', l1: '', l2: '', leafname: '' };
-        index.name = selectedOption1.value;
-        index.l1 = selectedOption2.value;
+        const index = { index: { name: selectedOption1.value, L1: selectedOption2.value, L2: '', leafname: '' } };
+        console.log(index);
         const response = await listIndex(index); // 假设你有这个接口
-        options3.value = response.data;
+        options3.value = response.data.index;
         if (options3.value.length > 0) {
-          selectedOption3.value = options3.value[0].id; // 默认选择第一个选项
+          selectedOption3.value = options3.value[0]; // 默认选择第一个选项
           fetchData(); // 获取数据
         }
       } catch (error) {
@@ -104,12 +104,10 @@ export default {
     const fetchData = async () => {
       if (selectedOption1.value && selectedOption2.value && selectedOption3.value) {
         try {
-          const index = { name: '', l1: '', l2: '', leafname: '' };
-          index.name = selectedOption1.value;
-          index.l1 = selectedOption2.value;
-          index.l2 = selectedOption3.value;
-          const response = await listIndex(index); // 假设你有这个接口
-          records.value = response.data;
+          const index = { index: { name: selectedOption1.value, L1: selectedOption2.value, L2: selectedOption3.value, leafname: '' } };
+          console.log(index);
+          const response = await listIndex(index);
+          records.value = response.data.index;
         } catch (error) {
           console.error('Failed to fetch records', error);
         }
@@ -127,6 +125,16 @@ export default {
     // 页面加载时获取选项
     onMounted(() => {
       fetchOptions1(); // 获取第一个下拉框的选项
+    });
+
+    // 监听 selectedOption1 的变化，变化时调用 fetchOptions2
+    watch(selectedOption1, () => {
+      fetchOptions2();
+    });
+
+    // 监听 selectedOption2 的变化，变化时调用 fetchOptions3
+    watch(selectedOption2, () => {
+      fetchOptions3();
     });
 
     return {
