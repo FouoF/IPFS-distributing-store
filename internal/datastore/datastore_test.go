@@ -2,6 +2,8 @@ package datastore
 
 import (
 	"testing"
+
+	"github.com/ipfs/go-cid"
 )
 
 // TestNewTreeStore 测试 NewTreeStore 函数
@@ -73,7 +75,7 @@ func TestGetNode(t *testing.T) {
 func TestAddLeaf(t *testing.T) {
 	store := NewTreeStore()
 	idx := Index{Name: "test", L1: "level1", L2: "level2", LeafName: "leaf"}
-	cid := "QmHash"
+	cid := cid.Cid{}
 
 	err := store.AddIndex(Index{Name: "test", L1: "level1", L2: "level2"})
 	if err != nil {
@@ -106,7 +108,7 @@ func TestAddLeaf(t *testing.T) {
 func TestAddLeaf_InvalidIndex(t *testing.T) {
 	store := NewTreeStore()
 	idx := Index{Name: "test", L1: "level1", L2: "level2", LeafName: "leaf"}
-	cid := "QmHash"
+	cid := cid.Cid{}
 
 	err := store.AddLeaf(idx, cid)
 	if err == nil {

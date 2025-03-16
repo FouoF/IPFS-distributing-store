@@ -1,31 +1,34 @@
 package connectionmanager
 
 import (
-	"context"
 	"fmt"
 	"io"
+	ipfs "ipfs-store/internal/ipfs-client"
 	v1 "ipfs-store/api/admin-service/v1"
-	"log"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Dial(target string, ctx context.Context) {
+func Dial(target string, connection *connection, ch chan Record) error{
 	// 连接到 gRPC 服务器
 	conn, err := grpc.NewClient(fmt.Sprintf("dns:///%v", target), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		return err
 	}
 	defer conn.Close()
 
 	client := v1.NewSyncClient(conn)
 
+	connection.health = true
+
 	// 客户端调用 SyncDataFromEndpoint 方法
-	stream, err := client.SyncDataFromEndpoint(ctx, &v1.SyncDataFromEndpointRequest{})
+	stream, err := client.SyncDataFromEndpoint(connection.ctx, &v1.SyncDataFromEndpointRequest{})
 	if err != nil {
-		log.Fatalf("could not sync data: %v", err)
+		return err
 	}
+
+	buffer := NewBuffer(BUFFER_SIZE)
 
 	for {
 		fileChunk, err := stream.Recv()
@@ -33,8 +36,19 @@ func Dial(target string, ctx context.Context) {
 			break // 结束接收
 		}
 		if err != nil {
-			log.Fatalf("could not receive file chunk: %v", err)
+			return err
 		}
-		fmt.Printf("Received chunk: %s\n", string(fileChunk.Data))
+		connection.bits = connection.bits + buffer.Append(fileChunk.Data)
+		if (fileChunk.IsFinalChunk) {
+			name := fileChunk.Index.Leafname
+			cid, err := ipfs.Pinning(buffer.data)
+			if err != nil {
+				return err
+			}
+			ch <- Record{Cid: cid, Addr: address(""), Name: name}
+			buffer.Clear()
+		}
 	}
+
+	return nil
 }

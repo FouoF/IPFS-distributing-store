@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/ipfs/go-cid"
 )
 
 var (
@@ -17,7 +18,7 @@ var (
 type DataRepo interface {
 	AddIndex(ctx context.Context, idx datastore.Index) error
 	GetNode(ctx context.Context, idx datastore.Index) *datastore.Node
-	AddLeaf(ctx context.Context, idx datastore.Index, cid string) error
+	AddLeaf(ctx context.Context, idx datastore.Index, cid cid.Cid) error
 }
 
 type DataUsecase struct {
@@ -43,7 +44,7 @@ func (uc *DataUsecase) GetNode(ctx context.Context, idx datastore.Index) (*datas
 	return node, nil
 }
 
-func (uc *DataUsecase) AddLeaf(ctx context.Context, idx datastore.Index, cid string) error {
+func (uc *DataUsecase) AddLeaf(ctx context.Context, idx datastore.Index, cid cid.Cid) error {
 	uc.log.WithContext(ctx).Infof("addleaf: %v", idx)
 	return uc.repo.AddLeaf(ctx, idx, cid)
 }

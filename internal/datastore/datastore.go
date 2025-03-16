@@ -1,6 +1,10 @@
 package datastore
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/ipfs/go-cid"
+)
 
 type TreeStore struct {
 	root *Node
@@ -17,7 +21,7 @@ type Node struct {
 	Isleaf   bool
 	Name     string
 	Children []*Node
-	Cid      string
+	Cid      cid.Cid
 }
 
 func (s *TreeStore) AddIndex(idx Index) error {
@@ -47,7 +51,7 @@ func (s *TreeStore) GetNode(idx Index) *Node {
 	return s.findNodeByIndex(idx)
 }
 
-func (s *TreeStore) AddLeaf(idx Index, cid string) error {
+func (s *TreeStore) AddLeaf(idx Index, cid cid.Cid) error {
 	node := s.findNodeByIndex(idx)
 	if node == nil {
 		return errors.New("invalid index")

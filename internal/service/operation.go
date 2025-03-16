@@ -4,17 +4,24 @@ import (
 	"context"
 	v1 "ipfs-store/api/admin-service/v1"
 	"ipfs-store/internal/biz"
+	manager "ipfs-store/internal/connection-manager"
 )
 
 type OperationService struct {
 	v1.UnimplementedOperationServer
 
+	cm *manager.Manager
 	uc *biz.OperationUsecase
 	du *biz.DataUsecase
+	ch chan manager.Record
 }
 
 func NewOperationService(uc *biz.OperationUsecase, du *biz.DataUsecase) *OperationService {
-	return &OperationService{uc: uc, du: du}
+	ch := make(chan manager.Record)
+	manager := manager.NewManager(ch)
+	s := &OperationService{uc: uc, du: du, ch: ch, cm: manager}
+	go WatchCh(s)
+	return s
 }
 
 func (s *OperationService) ListNode(ctx context.Context, req *v1.ListNodeRequest) (*v1.ListNodeReply, error) {
@@ -52,6 +59,10 @@ func (s *OperationService) ListEndpoint(ctx context.Context, req *v1.ListEndpoin
 
 func (s *OperationService) GetEndpoint(ctx context.Context, req *v1.GetEndpointRequest) (*v1.GetEndpointReply, error) {
 	node, err := s.du.GetNode(ctx, s.du.V1ToDatastore(req.Index))
+	if err != nil {
+		return nil, err
+
+	}
 	endpoint, err := s.uc.GetEndpoint(ctx, node.Name)
 	var endpoints []*v1.Endpoint
 	endpoints = append(endpoints, endpoint)
@@ -102,4 +113,15 @@ func (s *OperationService) ListIndex(ctx context.Context, req *v1.ListIndexReque
 		return nil, err
 	}
 	return &v1.ListIndexReply{Index: indices}, nil
+}
+
+func WatchCh(s *OperationService) {
+	ctx := context.TODO()
+	for {
+		record := <-s.ch
+		endpoint, _ := s.uc.GetEndpoint(ctx, string(record.Addr))
+		index := s.du.V1ToDatastore(endpoint.Index)
+		index.LeafName = record.Name
+		s.du.AddLeaf(ctx, index, record.Cid)
+	}
 }

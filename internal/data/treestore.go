@@ -7,6 +7,7 @@ import (
 	"ipfs-store/internal/datastore"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/ipfs/go-cid"
 )
 
 type DataRepo struct {
@@ -29,6 +30,6 @@ func (r *DataRepo) GetNode(ctx context.Context, idx datastore.Index) *datastore.
 	return r.data.GetNode(idx)
 }
 
-func (r *DataRepo) AddLeaf(ctx context.Context, idx datastore.Index, cid string) error {
+func (r *DataRepo) AddLeaf(ctx context.Context, idx datastore.Index, cid cid.Cid) error {
 	return r.data.AddLeaf(idx, cid)
 }
