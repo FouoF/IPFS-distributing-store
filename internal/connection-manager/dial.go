@@ -3,7 +3,6 @@ package connectionmanager
 import (
 	"fmt"
 	"io"
-	ipfs "ipfs-store/internal/ipfs-client"
 	v1 "ipfs-store/api/admin-service/v1"
 
 	"google.golang.org/grpc"
@@ -41,9 +40,10 @@ func Dial(target string, connection *connection, ch chan Record) error{
 		connection.bits = connection.bits + buffer.Append(fileChunk.Data)
 		if (fileChunk.IsFinalChunk) {
 			name := fileChunk.Index.Leafname
-			cid, err := ipfs.Pinning(buffer.data)
+			cid, err := connection.manager.client.PinDirect(buffer.data, name)
 			if err != nil {
-				return err
+				fmt.Println("pin direct error: %v", err)
+				continue
 			}
 			ch <- Record{Cid: cid, Addr: address(""), Name: name}
 			buffer.Clear()

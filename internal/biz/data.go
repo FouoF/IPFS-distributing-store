@@ -50,6 +50,9 @@ func (uc *DataUsecase) AddLeaf(ctx context.Context, idx datastore.Index, cid cid
 }
 
 func (uc *DataUsecase) V1ToDatastore(idx *v1.Index) datastore.Index {
+	if idx == nil {
+		return datastore.Index{Name: "", L1: "", L2: ""}
+	}
 	return datastore.Index{Name: idx.Name, L1: idx.L1, L2: idx.L2}
 }
 
