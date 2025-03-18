@@ -2,8 +2,7 @@ import axios from 'axios';
 
 // 配置 axios 实例
 const api = axios.create({
-  // baseURL: 'admin',// 假设 nginx 配置了转发到后端服务的路径
-  baseURL: 'http://localhost:8000/admin', //test url
+  baseURL: 'admin',
   timeout: 10000, // 请求超时设置
   headers: {
     'Content-Type': 'application/json',
@@ -54,4 +53,91 @@ export const listIndex = (indexData) => {
 };
 export const createIndex = (indexData) => {
   return api.post('/index/create', indexData);
+};
+
+const IPFS_GATEWAYS = [
+  'http://ipfs.default.svc.cluster.local:5001',
+  // 'http://localhost:5001'
+];
+
+// 创建带探活检测的动态网关客户端
+const createIpfsClient = async () => {
+  for (const gateway of IPFS_GATEWAYS) {
+    try {
+      // 发送探活请求检查网关可用性
+      await axios.post(`${gateway}/api/v0/version`, { timeout: 2000 });
+      return axios.create({
+        baseURL: gateway,
+        timeout: 15000,
+        responseType: 'arraybuffer' // 二进制响应处理
+      });
+    } catch (e) {
+      console.warn(`Gateway ${gateway} unavailable, trying next...`);
+    }
+  }
+  throw new Error('All IPFS gateways are down');
+};
+
+// 核心下载方法（支持进度回调）
+export const downloadFromIPFS = async (cid, filename, onProgress) => {
+  const client = await createIpfsClient();
+  
+  try {
+    // 通过 /api/v0/cat 获取原始数据流
+    const response = await client.post(`/api/v0/cat?arg=${cid}`, {
+      onDownloadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          onProgress(percent);
+        }
+      }
+    });
+
+    // 处理文件名逻辑
+    const finalFilename = filename || `ipfs_${cid.slice(0, 8)}`;
+
+    // 创建 Blob 并触发下载
+    const blob = new Blob([response.data]);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = finalFilename;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+
+    return true;
+  } catch (error) {
+    console.error('IPFS下载失败:', error);
+    return false;
+  }
+};
+
+// 辅助方法：获取文件元数据
+export const getFileMetadata = async (cid) => {
+  try {
+    const client = await createIpfsClient();
+    
+    // 调用新接口并指定 JSON 格式输出
+    const { data } = await client.post('/api/v0/files/stat', null, {
+      params: {
+        arg: `/ipfs/${cid}`,      // 需要完整 IPFS 路径
+        format: 'json',           // 强制返回 JSON 格式
+        withLocal: false           // 可选：包含本地存储信息
+      }
+    });
+
+    // 解析返回数据结构
+    return {
+      size: data.cumulsize || 0,  // 新接口返回字段名改为小写
+      type: data.type, // 类型字段标准化
+    };
+  } catch (e) {
+    console.error('获取元数据失败:', e);
+    return { 
+      size: 'unknown', 
+      type: 'unknown',
+    };
+  }
 };

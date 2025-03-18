@@ -33,6 +33,7 @@ type Manager struct {
 
 func NewManager(cbch chan Record) *Manager {
 	return &Manager{
+		client: 	 client.NewIPFSClient(),
 		connections: make(map[address]connection),
 		callbackch:  cbch,
 	}

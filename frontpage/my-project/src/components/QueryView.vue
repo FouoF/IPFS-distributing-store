@@ -3,6 +3,7 @@
     <div class="header-container">
       <h1>数据查询</h1>
       <!-- <el-button type="primary" @click="">添加索引</el-button> -->
+      <!-- <el-button @click="testdownloadRecord" type="primary" size="small" >testDownload</el-button> -->
     </div>
 
     <el-row :gutter="20">
@@ -26,10 +27,11 @@
     </el-row>
 
     <el-table v-if="records.length" :data="records" style="width: 100%">
-      <el-table-column prop="name" label="Record Name"></el-table-column>
+      <el-table-column prop="leafname" label="Name"></el-table-column>
+      <el-table-column prop="cid" label="CID"></el-table-column>
       <el-table-column label="Action" width="180">
         <template #default="{ row }">
-          <el-button @click="downloadRecord(row.id)" type="primary" size="small">Download</el-button>
+          <el-button @click="downloadRecord(row)" type="primary" size="small" :loading="row.downloading">Download</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -38,7 +40,8 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue';
-import { listIndex } from '@/api'; // 引入 API 接口
+import { listIndex, downloadFromIPFS, getFileMetadata } from '@/api'; // 引入 API 接口
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   setup() {
@@ -117,10 +120,110 @@ export default {
     };
 
     // 下载记录的逻辑
-    const downloadRecord = (id) => {
-      console.log('Downloading record', id);
-      // 处理下载逻辑
+    const downloadRecord = async (row) => {
+      try {
+        // 获取文件元数据（大小、类型）
+        const { size, type } = await getFileMetadata(row.cid);
+        
+        // 类型检查
+        if (type === 'directory') {
+          ElMessage.error('不支持下载目录');
+          return;
+        }
+
+        // 大文件确认（超过50MB）
+        if (size > 50 * 1024 * 1024) {
+          await ElMessageBox.confirm(
+            `文件较大（${(size / 1024 / 1024).toFixed(1)}MB），确认下载吗？`,
+            '下载确认',
+            { type: 'warning' }
+          );
+        }
+
+        // 显示进度提示
+        const message = ElMessage({
+          message: `下载准备中...`,
+          type: 'info',
+          duration: 0,
+          showClose: true
+        });
+
+        // 执行下载
+        const success = await downloadFromIPFS(
+          row.cid,
+          row.leafname || `file_${row.cid.slice(0, 8)}`, // 使用 leafname 或生成默认名
+          (p) => {
+            message.message = `下载进度: ${p}%`;
+          }
+        );
+
+        // 关闭进度提示
+        message.close();
+
+        if (success) {
+          ElMessage.success('下载已开始');
+        } else {
+          ElMessage.warning('已切换备用网关下载');
+        }
+      } catch (error) {
+        if (error !== 'cancel') { // 忽略用户取消的情况
+          ElMessage.error(`下载失败: ${error.message}`);
+        }
+      }
     };
+
+    // const testdownloadRecord = async () => {
+    //   try {
+    //     // 获取文件元数据（大小、类型）
+    //     const row = {leafname: "流汗黄豆.png", cid: "QmUDjVT54GiUFkW8Nc4Q2nTVKxEDmirKtK9oRFRKmhZLzL"}
+    //     const { size, type } = await getFileMetadata(row.cid);
+        
+    //     // 类型检查
+    //     if (type === 'directory') {
+    //       ElMessage.error('不支持下载目录');
+    //       return;
+    //     }
+
+    //     // 大文件确认（超过50MB）
+    //     if (size > 50 * 1024 * 1024) {
+    //       await ElMessageBox.confirm(
+    //         `文件较大（${(size / 1024 / 1024).toFixed(1)}MB），确认下载吗？`,
+    //         '下载确认',
+    //         { type: 'warning' }
+    //       );
+    //     }
+
+    //     // 显示进度提示
+    //     const message = ElMessage({
+    //       message: `下载准备中...`,
+    //       type: 'info',
+    //       duration: 0,
+    //       showClose: true
+    //     });
+
+    //     // 执行下载
+    //     const success = await downloadFromIPFS(
+    //       row.cid,
+    //       row.leafname || `file_${row.cid.slice(0, 8)}`, // 使用 leafname 或生成默认名
+    //       (p) => {
+    //         message.message = `下载进度: ${p}%`;
+    //       }
+    //     );
+
+    //     // 关闭进度提示
+    //     message.close();
+
+    //     if (success) {
+    //       ElMessage.success('下载已开始');
+    //     } else {
+    //       ElMessage.warning('已切换备用网关下载');
+    //     }
+    //   } catch (error) {
+    //     if (error !== 'cancel') { // 忽略用户取消的情况
+    //       ElMessage.error(`下载失败: ${error.message}`);
+    //     }
+    //   }
+    // };
 
     // 页面加载时获取选项
     onMounted(() => {
@@ -146,7 +249,8 @@ export default {
       options3,
       records,
       fetchData,
-      downloadRecord
+      downloadRecord,
+      // testdownloadRecord
     };
   }
 };
