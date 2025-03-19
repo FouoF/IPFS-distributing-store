@@ -28,7 +28,7 @@ enum Status {
 //endpoint is keepalived datasource
 message Endpoint {
     string id = 1;
-    string desctiption = 2;
+    string description = 2;
     string addr = 3;
     Index  index = 4;
 }

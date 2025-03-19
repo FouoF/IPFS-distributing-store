@@ -106,11 +106,10 @@ message AddEndpointRequest {
 }
 
 message AddEndpointReply {
-  bool success = 1;
 }
 
 message RemoveEndpointRequest {
-  Index index = 1;
+  string addr = 1;
 }
 
 message RemoveEndpointReply {
