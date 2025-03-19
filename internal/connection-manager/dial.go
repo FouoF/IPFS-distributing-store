@@ -42,10 +42,10 @@ func Dial(target string, connection *connection, ch chan Record) error{
 			name := fileChunk.Index.Leafname
 			cid, err := connection.manager.client.PinDirect(buffer.data, name)
 			if err != nil {
-				fmt.Println("pin direct error: %v", err)
+				fmt.Printf("pin direct error: %v", err)
 				continue
 			}
-			ch <- Record{Cid: cid, Addr: address(""), Name: name}
+			ch <- Record{Cid: cid, Addr: "", Name: name}
 			buffer.Clear()
 		}
 	}

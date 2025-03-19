@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"errors"
 	"sync"
 
 	v1 "ipfs-store/api/admin-service/v1"
@@ -34,10 +35,10 @@ func NewOperationUsecase(logger log.Logger) *OperationUsecase {
 
 func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoint) error {
 	uc.log.WithContext(ctx).Infof("add endpoint: %v", endpoint)
-	if err := uc.dialEndpoint(ctx, endpoint.Addr); err != nil {
-		return err
-	}
 	uc.endpointList.lock.Lock()
+	if uc.endpointList.endpoints[endpoint.Addr] != nil {
+		return errors.New("endpoint already exists")
+	}
 	defer uc.endpointList.lock.Unlock()
 	uc.endpointList.endpoints[endpoint.Addr] = &v1.Endpoint{
 		Addr:        endpoint.Addr,
@@ -68,9 +69,6 @@ func (uc *OperationUsecase) GetEndpoint(ctx context.Context, addr string) (*v1.E
 
 func (uc *OperationUsecase) DeleteEndpoint(ctx context.Context, addr string) error {
 	uc.log.WithContext(ctx).Infof("delete endpoint: %v", addr)
-	if err := uc.closeConnection(ctx, addr); err != nil {
-		return err
-	}
 	uc.endpointList.lock.Lock()
 	defer uc.endpointList.lock.Unlock()
 	delete(uc.endpointList.endpoints, addr)
@@ -115,14 +113,5 @@ func (uc *OperationUsecase) DeleteNode(ctx context.Context, addr string) error {
 	uc.nodeList.lock.Lock()
 	defer uc.nodeList.lock.Unlock()
 	delete(uc.nodeList.nodes, addr)
-	return nil
-}
-func (uc *OperationUsecase) dialEndpoint(ctx context.Context, addr string) error {
-	uc.log.WithContext(ctx).Infof("dial endpoint: %v", addr)
-	return nil
-}
-
-func (uc *OperationUsecase) closeConnection(ctx context.Context, addr string) error {
-	uc.log.WithContext(ctx).Infof("close connection: %v", addr)
 	return nil
 }

@@ -77,6 +77,10 @@ func (s *OperationService) AddEndpoint(ctx context.Context, req *v1.AddEndpointR
 	if err != nil {
 		return nil, err
 	}
+	err = s.cm.DialAddr(req.Endpoint.Addr)
+	if err != nil {
+		return nil, err
+	}
 	return &v1.AddEndpointReply{}, nil
 }
 
@@ -90,6 +94,7 @@ func (s *OperationService) RemoveEndpoint(ctx context.Context, req *v1.RemoveEnd
 	if err != nil {
 		return nil, err
 	}
+	s.cm.Close(node.Name)
 	return &v1.RemoveEndpointReply{}, nil
 }
 
