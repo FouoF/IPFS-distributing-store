@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-service
+  template:
+    metadata:
+      labels:
+        app: admin-service
+    spec:
+      containers:
+        - name: admin-service
+          image: localhost:5000/admin-service:latest
+          ports:
+            - containerPort: 8000
+            - containerPort: 9000
+          volumeMounts:
+            - name: config-volume
+              mountPath: /data/conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: admin-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+spec:
+  selector:
+    app: admin-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000
+      targetPort: 8000
+    - name: grpc
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: admin-service-config
+data:
+  config.yaml: |
+    # Add your service configuration here
+    server:
+      http:
+        addr: 0.0.0.0:8000
+        timeout: 1s
+      grpc:
+        addr: 0.0.0.0:9000
+        timeout: 1s
+    data:
+      database:
+        driver: mysql
+        source: root:root@tcp(127.0.0.1:3306)/test?parseTime=True&loc=Local
+      redis:
+        addr: 127.0.0.1:6379
+        read_timeout: 0.2s
+        write_timeout: 0.2s
