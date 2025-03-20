@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 配置 axios 实例
 const api = axios.create({
-  baseURL: 'admin',
+  baseURL: '/admin/',
   timeout: 10000, // 请求超时设置
   headers: {
     'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ const createIpfsClient = async () => {
 // 核心下载方法（支持进度回调）
 export const downloadFromIPFS = async (cid, filename, onProgress) => {
   const client = await createIpfsClient();
-  
+
   try {
     // 通过 /api/v0/cat 获取原始数据流
     const response = await client.post(`/api/v0/cat?arg=${cid}`, {
@@ -118,7 +118,7 @@ export const downloadFromIPFS = async (cid, filename, onProgress) => {
 export const getFileMetadata = async (cid) => {
   try {
     const client = await createIpfsClient();
-    
+
     // 调用新接口并指定 JSON 格式输出
     const { data } = await client.post('/api/v0/files/stat', null, {
       params: {
@@ -135,8 +135,8 @@ export const getFileMetadata = async (cid) => {
     };
   } catch (e) {
     console.error('获取元数据失败:', e);
-    return { 
-      size: 'unknown', 
+    return {
+      size: 'unknown',
       type: 'unknown',
     };
   }

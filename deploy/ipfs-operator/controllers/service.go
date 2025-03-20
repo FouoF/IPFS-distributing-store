@@ -74,6 +74,12 @@ func (r *IpfsClusterReconciler) ensureServiceCluster(
 				Port:       portClusterSwarm,
 				TargetPort: intstr.FromString("cluster-swarm"),
 			},
+			{
+				Name:       "ipfs-api",
+				Protocol:   corev1.ProtocolTCP,
+				Port:       5001,
+				TargetPort: intstr.FromString("api"),
+			},
 		}
 		svc.Spec.Selector = map[string]string{
 			"app.kubernetes.io/name": "ipfs-cluster-" + m.Name,
