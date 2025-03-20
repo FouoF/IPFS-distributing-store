@@ -1,51 +1,16 @@
-# Kratos Project Template
+# IPFS-Store
+This is a project based on IPFS cluster and IPFS, it uses cloud native design and can be esaliy deployed in K8s cluster.
 
-## Install Kratos
-```
-go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
-```
-## Create a service
-```
-# Create a template project
-kratos new server
+## Prepare
+This project use local docker register, so if you want to use it correctly, you must have you own register and build images youself.
+To reduce network issue, all image is build with pre-build binary file, build before docker build is necessary.
 
-cd server
-# Add a proto template
-kratos proto add api/server/server.proto
-# Generate the proto code
-kratos proto client api/server/server.proto
-# Generate the source code of service by proto file
-kratos proto server api/server/server.proto -t internal/service
+## Deploy
+```
+# deploy IPFS cluster
+cd ./deploy/ipfs-operator
+make deploy
 
-go generate ./...
-go build -o ./bin/ ./...
-./bin/server -conf ./configs
-```
-## Generate other auxiliary files by Makefile
-```
-# Download and update dependencies
-make init
-# Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
-# Generate all files
-make all
-```
-## Automated Initialization (wire)
-```
-# install wire
-go get github.com/google/wire/cmd/wire
-
-# generate wire
-cd cmd/server
-wire
-```
-
-## Docker
-```bash
-# build
-docker build -t <your-docker-image-name> .
-
-# run
-docker run --rm -p 8000:8000 -p 9000:9000 -v </path/to/your/configs>:/data/conf <your-docker-image-name>
-```
-
+# /deploy contains all necessary K8s resource this project need.
+# NOTICE: The project use cilium as CNI, if you use other CNI or use cloud-provider load-balancer, you need to configure it yourself.
+kubectl apply -f /deploy *
