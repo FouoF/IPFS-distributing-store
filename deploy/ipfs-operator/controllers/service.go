@@ -19,7 +19,7 @@ func (r *IpfsClusterReconciler) ensureServiceCluster(
 	m *clusterv1alpha1.IpfsCluster,
 ) (*corev1.Service, error) {
 	logger := log.FromContext(ctx)
-	svcName := "ipfs-cluster-" + m.Name
+	svcName := "ipfs"
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      svcName,

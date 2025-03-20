@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	ClusterHost = "http://127.0.0.1:9094" // Cluster API 默认端口 9094
-	IPFSHost    = "http://127.0.0.1:5001" // IPFS API 默认端口 5001
+	ClusterHost = "http://ipfs.default.svc.cluster.local:9094" // Cluster API 默认端口 9094
+	IPFSHost    = "http://ipfs.default.svc.cluster.local:5001" // IPFS API 默认端口 5001
 )
 
 type IPFSClient struct {

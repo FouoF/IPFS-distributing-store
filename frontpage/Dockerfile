@@ -2,7 +2,7 @@
 FROM nginx:alpine
 
 # Copy the built Vue files into Nginx's HTML directory
-COPY dist /usr/share/nginx/html
+COPY my-project/dist /usr/share/nginx/html
 
 # Copy a custom Nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
