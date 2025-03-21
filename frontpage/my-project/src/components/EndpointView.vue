@@ -38,10 +38,10 @@
           <el-input v-model="newEndpoint.index.name"></el-input>
         </el-form-item>
         <el-form-item label="一级索引" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.index.l1"></el-input>
+          <el-input v-model="newEndpoint.index.L1"></el-input>
         </el-form-item>
         <el-form-item label="二级索引" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.index.l2"></el-input>
+          <el-input v-model="newEndpoint.index.L2"></el-input>
         </el-form-item>
       </el-form>
 
@@ -66,7 +66,7 @@ export default {
       id: '',
       description: '',
       address: '',
-      index: { name: '', l1: '', l2: '', leafname: '' } // 直接定义新对象
+      index: { name: '', L1: '', L2: '', leafname: '' } // 直接定义新对象
     }
     };
   },
@@ -117,7 +117,12 @@ export default {
 
     // 重置表单
     resetForm() {
-      this.newEndpoint = { id: '', description: '', addr: '' };
+      this.newEndpoint = {
+        id: '',
+        description: '',
+        address: '',
+        index: { name: '', L1: '', L2: '', leafname: '' }
+      };
     },
   },
 };
