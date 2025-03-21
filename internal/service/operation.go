@@ -85,16 +85,11 @@ func (s *OperationService) AddEndpoint(ctx context.Context, req *v1.AddEndpointR
 }
 
 func (s *OperationService) RemoveEndpoint(ctx context.Context, req *v1.RemoveEndpointRequest) (*v1.RemoveEndpointReply, error) {
-	didx := s.du.V1ToDatastore(req.Index)
-	node, err := s.du.GetNode(ctx ,didx)
+	err := s.uc.DeleteEndpoint(ctx, req.Addr)
 	if err != nil {
 		return nil, err
 	}
-	err = s.uc.DeleteEndpoint(ctx, node.Name)
-	if err != nil {
-		return nil, err
-	}
-	s.cm.Close(node.Name)
+	s.cm.Close(req.Addr)
 	return &v1.RemoveEndpointReply{}, nil
 }
 

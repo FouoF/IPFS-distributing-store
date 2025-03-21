@@ -42,7 +42,7 @@ func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoi
 	defer uc.endpointList.lock.Unlock()
 	uc.endpointList.endpoints[endpoint.Addr] = &v1.Endpoint{
 		Addr:        endpoint.Addr,
-		Desctiption: endpoint.Desctiption,
+		Description: endpoint.Description,
 		Id:          endpoint.Id,
 		Index:       endpoint.Index,
 	}
