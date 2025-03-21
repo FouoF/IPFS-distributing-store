@@ -3,8 +3,9 @@ package connectionmanager
 import (
 	"context"
 
-	"github.com/ipfs/go-cid"
 	client "ipfs-store/internal/ipfs-client"
+
+	"github.com/ipfs/go-cid"
 )
 
 const BUFFER_SIZE = 4096
@@ -16,11 +17,11 @@ type Record struct {
 }
 
 type connection struct {
-	ctx 	context.Context
-	bits    int
-	health 	bool
-	cancel  context.CancelFunc
-	manager *Manager
+	ctx 		context.Context
+	bits    	int
+	health 		bool
+	cancel  	context.CancelFunc
+	manager 	*Manager
 }
 
 type Manager struct {
@@ -41,10 +42,11 @@ func (m *Manager) DialAddr(addr string) error{
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	connection := connection{ctx: ctx, cancel: cancel, manager: m}
-	if err := Dial(string(addr), &connection, m.callbackch); err != nil {
-		cancel()
-		return err
-	}
+	go func() {
+		if err := Dial(string(addr), &connection, m.callbackch); err != nil {
+			cancel()
+		}
+	}()
 	m.connections[addr] = connection
 	return nil
 }
@@ -59,4 +61,8 @@ func (m *Manager) Health(addr string) bool{
 
 func (m *Manager) GetBits(addr string) int{
 	return m.connections[addr].bits
+}
+
+func (c *connection) SetHealthToFalse() {
+	c.health = false
 }

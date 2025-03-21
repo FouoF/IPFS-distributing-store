@@ -20,7 +20,7 @@ func Dial(target string, connection *connection, ch chan Record) error{
 	client := v1.NewSyncClient(conn)
 
 	connection.health = true
-
+	defer connection.SetHealthToFalse()
 	// 客户端调用 SyncDataFromEndpoint 方法
 	stream, err := client.SyncDataFromEndpoint(connection.ctx, &v1.SyncDataFromEndpointRequest{})
 	if err != nil {
@@ -32,7 +32,7 @@ func Dial(target string, connection *connection, ch chan Record) error{
 	for {
 		fileChunk, err := stream.Recv()
 		if err == io.EOF {
-			break // 结束接收
+			break
 		}
 		if err != nil {
 			return err
