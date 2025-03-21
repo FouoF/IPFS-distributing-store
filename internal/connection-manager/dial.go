@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func Dial(target string, connection *connection, ch chan Record) error{
+func Dial(target string, connection *connection, ch chan Record) error {
 	// 连接到 gRPC 服务器
 	conn, err := grpc.NewClient(fmt.Sprintf("dns:///%v", target), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -38,14 +38,14 @@ func Dial(target string, connection *connection, ch chan Record) error{
 			return err
 		}
 		connection.bits = connection.bits + buffer.Append(fileChunk.Data)
-		if (fileChunk.IsFinalChunk) {
+		if fileChunk.IsFinalChunk {
 			name := fileChunk.Index.Leafname
 			cid, err := connection.manager.client.PinDirect(buffer.data, name)
 			if err != nil {
 				fmt.Printf("pin direct error: %v", err)
 				continue
 			}
-			ch <- Record{Cid: cid, Addr: "", Name: name}
+			ch <- Record{Cid: cid, Addr: target, Name: name}
 			buffer.Clear()
 		}
 	}
