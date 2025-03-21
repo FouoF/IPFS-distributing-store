@@ -17,19 +17,20 @@ type server struct {
 }
 
 func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, stream v1.Sync_SyncDataFromEndpointServer) error {
+	startTime := time.Date(2025, 3, 19, 15, 0, 0, 0, time.UTC)
 	// 示例索引
 	idx := v1.Index{
 		Name:     "心率",
 		L1:       "1号房间",
 		L2:       "1号床",
-		Leafname: "2025.3.19 15:00",
+		Leafname: startTime.Format("2006-01-02 15:04:05"),
 	}
 
 	// 假设数据从 2025年3月19日 15:00 开始
-	startTime := time.Date(2025, 3, 19, 15, 0, 0, 0, time.UTC)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	for j := 0; j < 5; j++ {
+		idx.Leafname = startTime.Format("2006-01-02 15:04:05")
 		// 模拟心率数据：每个数据块代表 1 分钟间隔的心率数据
 		for i := range 60 {
 			// 每个数据块的心率数据为：时间戳 + 心率值
