@@ -5,9 +5,9 @@ import (
 	"fmt"
 	v1 "ipfs-store/api/admin-service/v1"
 	"log"
+	"math/rand"
 	"net"
 	"time"
-	"math/rand"
 
 	"google.golang.org/grpc"
 )
@@ -20,8 +20,8 @@ func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, strea
 	// 示例索引
 	idx := v1.Index{
 		Name:     "心率",
-		L1:       "一号房间",
-		L2:       "一号床",
+		L1:       "1号房间",
+		L2:       "1号床",
 		Leafname: "2025.3.19 15:00",
 	}
 
@@ -30,7 +30,7 @@ func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, strea
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	for j := 0; j < 5; j++ {
-	// 模拟心率数据：每个数据块代表 1 分钟间隔的心率数据
+		// 模拟心率数据：每个数据块代表 1 分钟间隔的心率数据
 		for i := range 60 {
 			// 每个数据块的心率数据为：时间戳 + 心率值
 			startTime = startTime.Add(time.Minute * time.Duration(1))
@@ -38,10 +38,10 @@ func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, strea
 
 			// 创建一个 FileChunk
 			fileChunk := &v1.FileChunk{
-				Index:      	&idx,
-				ChunkIndex: 	int64(i),
-				Data: 			fmt.Appendf(nil, "%s 心率：%d bpm", startTime.Format("2006-01-02 15:04:05"), heartRate),
-				IsFinalChunk: 	i == 59, // 最后一块数据设置 IsFinalChunk 为 true
+				Index:        &idx,
+				ChunkIndex:   int64(i),
+				Data:         fmt.Appendf(nil, "%s 心率：%d bpm", startTime.Format("2006-01-02 15:04:05"), heartRate),
+				IsFinalChunk: i == 59, // 最后一块数据设置 IsFinalChunk 为 true
 			}
 
 			// 发送数据块
