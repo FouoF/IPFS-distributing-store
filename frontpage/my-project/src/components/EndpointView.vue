@@ -26,22 +26,22 @@
     >
       <el-form :model="newEndpoint" ref="form">
         <el-form-item label="编号" :rules="[{ required: true, message: 'Please input ID', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.id"></el-input>
+          <el-input v-model="newEndpoint.endpoint.id"></el-input>
         </el-form-item>
         <el-form-item label="描述" :rules="[{ required: true, message: 'Please input description', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.description"></el-input>
+          <el-input v-model="newEndpoint.endpoint.description"></el-input>
         </el-form-item>
         <el-form-item label="地址" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.addr"></el-input>
+          <el-input v-model="newEndpoint.endpoint.addr"></el-input>
         </el-form-item>
         <el-form-item label="版块" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.index.name"></el-input>
+          <el-input v-model="newEndpoint.endpoint.index.name"></el-input>
         </el-form-item>
         <el-form-item label="一级索引" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.index.L1"></el-input>
+          <el-input v-model="newEndpoint.endpoint.index.L1"></el-input>
         </el-form-item>
         <el-form-item label="二级索引" :rules="[{ required: true, message: 'Please input address', trigger: 'blur' }]">
-          <el-input v-model="newEndpoint.index.L2"></el-input>
+          <el-input v-model="newEndpoint.endpoint.index.L2"></el-input>
         </el-form-item>
       </el-form>
 
@@ -63,11 +63,13 @@ export default {
       endpoints: [], // 存储从后端获取的端点数据
       dialogVisible: false,
       newEndpoint: {
-      id: '',
-      description: '',
-      address: '',
-      index: { name: '', L1: '', L2: '', leafname: '' } // 直接定义新对象
-    }
+        endpoint: {
+          id: '',
+          description: '',
+          addr: '',
+          index: { name: '', L1: '', L2: '', leafname: '' }
+          }
+      }
     };
   },
   created() {
@@ -117,12 +119,14 @@ export default {
 
     // 重置表单
     resetForm() {
-      this.newEndpoint = {
-        id: '',
-        description: '',
-        address: '',
-        index: { name: '', L1: '', L2: '', leafname: '' }
-      };
+      this.newEndpoint = { 
+        endpoint: {
+          id: '',
+          description: '',
+          addr: '',
+          index: { name: '', L1: '', L2: '', leafname: '' }
+          }
+      }
     },
   },
 };

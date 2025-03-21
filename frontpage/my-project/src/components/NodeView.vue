@@ -87,7 +87,7 @@ export default {
 
     async removeNode(node) {
       try {
-        await removeNode(node);
+        await removeNode(node.addr);
         this.fetchNodes(); // 重新加载节点数据
       } catch (error) {
         this.$message.error('Failed to remove node');
