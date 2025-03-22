@@ -51,6 +51,19 @@ export const listIndex = (indexData) => {
 
   return api.get('/index/list', { params });
 };
+
+export const listLeaf = (indexData) => {
+  const params = new URLSearchParams();
+
+  // 将 index 对象展开成 key=value 的格式
+  for (const key in indexData.index) {
+    if (indexData.index[key]) {  // 只添加非空值
+      params.append(`index.${key}`, indexData.index[key]);
+    }
+  }
+
+  return api.get('/index/listleaf', { params });
+};
 export const createIndex = (indexData) => {
   return api.post('/index/create', indexData);
 };

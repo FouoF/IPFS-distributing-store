@@ -40,7 +40,7 @@
 
 <script>
 import { ref, onMounted, watch } from 'vue';
-import { listIndex, downloadFromIPFS, getFileMetadata } from '@/api'; // 引入 API 接口
+import { listIndex, downloadFromIPFS, getFileMetadata, listLeaf } from '@/api'; // 引入 API 接口
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
@@ -109,8 +109,8 @@ export default {
         try {
           const index = { index: { name: selectedOption1.value, L1: selectedOption2.value, L2: selectedOption3.value, leafname: '' } };
           console.log(index);
-          const response = await listIndex(index);
-          records.value = response.data.index;
+          const response = await listLeaf(index);
+          records.value = response.data.leaf;
         } catch (error) {
           console.error('Failed to fetch records', error);
         }
