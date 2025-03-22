@@ -27,7 +27,7 @@
     </el-row>
 
     <el-table v-if="records.length" :data="records" style="width: 100%">
-      <el-table-column prop="leafname" label="Name"></el-table-column>
+      <el-table-column prop="name" label="Name"></el-table-column>
       <el-table-column prop="cid" label="CID"></el-table-column>
       <el-table-column label="Action" width="180">
         <template #default="{ row }">

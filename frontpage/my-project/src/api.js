@@ -68,27 +68,13 @@ export const createIndex = (indexData) => {
   return api.post('/index/create', indexData);
 };
 
-const IPFS_GATEWAYS = [
-  'http://ipfs.default.svc.cluster.local:5001',
-  // 'http://localhost:5001'
-];
-
 // 创建带探活检测的动态网关客户端
 const createIpfsClient = async () => {
-  for (const gateway of IPFS_GATEWAYS) {
-    try {
-      // 发送探活请求检查网关可用性
-      await axios.post(`${gateway}/api/v0/version`, { timeout: 2000 });
-      return axios.create({
-        baseURL: gateway,
-        timeout: 15000,
-        responseType: 'arraybuffer' // 二进制响应处理
-      });
-    } catch (e) {
-      console.warn(`Gateway ${gateway} unavailable, trying next...`);
-    }
-  }
-  throw new Error('All IPFS gateways are down');
+  return axios.create({
+    baseURL: "/api/",
+    timeout: 15000,
+    responseType: 'arraybuffer' // 二进制响应处理
+  });
 };
 
 // 核心下载方法（支持进度回调）
@@ -97,7 +83,7 @@ export const downloadFromIPFS = async (cid, filename, onProgress) => {
 
   try {
     // 通过 /api/v0/cat 获取原始数据流
-    const response = await client.post(`/api/v0/cat?arg=${cid}`, {
+    const response = await client.post(`/v0/cat?arg=${cid}`, {
       onDownloadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {
           const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -133,7 +119,7 @@ export const getFileMetadata = async (cid) => {
     const client = await createIpfsClient();
 
     // 调用新接口并指定 JSON 格式输出
-    const { data } = await client.post('/api/v0/files/stat', null, {
+    const { data } = await client.post('/v0/files/stat', null, {
       params: {
         arg: `/ipfs/${cid}`,      // 需要完整 IPFS 路径
         format: 'json',           // 强制返回 JSON 格式
