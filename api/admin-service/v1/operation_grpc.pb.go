@@ -28,6 +28,7 @@ const (
 	Operation_RemoveEndpoint_FullMethodName = "/adminservice.v1.Operation/RemoveEndpoint"
 	Operation_CreateIndex_FullMethodName    = "/adminservice.v1.Operation/CreateIndex"
 	Operation_ListIndex_FullMethodName      = "/adminservice.v1.Operation/ListIndex"
+	Operation_ListLeaf_FullMethodName       = "/adminservice.v1.Operation/ListLeaf"
 )
 
 // OperationClient is the client API for Operation service.
@@ -45,6 +46,7 @@ type OperationClient interface {
 	RemoveEndpoint(ctx context.Context, in *RemoveEndpointRequest, opts ...grpc.CallOption) (*RemoveEndpointReply, error)
 	CreateIndex(ctx context.Context, in *CreateIndexRequest, opts ...grpc.CallOption) (*CreateIndexReply, error)
 	ListIndex(ctx context.Context, in *ListIndexRequest, opts ...grpc.CallOption) (*ListIndexReply, error)
+	ListLeaf(ctx context.Context, in *ListLeafRequest, opts ...grpc.CallOption) (*ListLeafReply, error)
 }
 
 type operationClient struct {
@@ -145,6 +147,16 @@ func (c *operationClient) ListIndex(ctx context.Context, in *ListIndexRequest, o
 	return out, nil
 }
 
+func (c *operationClient) ListLeaf(ctx context.Context, in *ListLeafRequest, opts ...grpc.CallOption) (*ListLeafReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListLeafReply)
+	err := c.cc.Invoke(ctx, Operation_ListLeaf_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OperationServer is the server API for Operation service.
 // All implementations must embed UnimplementedOperationServer
 // for forward compatibility.
@@ -160,6 +172,7 @@ type OperationServer interface {
 	RemoveEndpoint(context.Context, *RemoveEndpointRequest) (*RemoveEndpointReply, error)
 	CreateIndex(context.Context, *CreateIndexRequest) (*CreateIndexReply, error)
 	ListIndex(context.Context, *ListIndexRequest) (*ListIndexReply, error)
+	ListLeaf(context.Context, *ListLeafRequest) (*ListLeafReply, error)
 	mustEmbedUnimplementedOperationServer()
 }
 
@@ -196,6 +209,9 @@ func (UnimplementedOperationServer) CreateIndex(context.Context, *CreateIndexReq
 }
 func (UnimplementedOperationServer) ListIndex(context.Context, *ListIndexRequest) (*ListIndexReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListIndex not implemented")
+}
+func (UnimplementedOperationServer) ListLeaf(context.Context, *ListLeafRequest) (*ListLeafReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLeaf not implemented")
 }
 func (UnimplementedOperationServer) mustEmbedUnimplementedOperationServer() {}
 func (UnimplementedOperationServer) testEmbeddedByValue()                   {}
@@ -380,6 +396,24 @@ func _Operation_ListIndex_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Operation_ListLeaf_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLeafRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OperationServer).ListLeaf(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Operation_ListLeaf_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OperationServer).ListLeaf(ctx, req.(*ListLeafRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Operation_ServiceDesc is the grpc.ServiceDesc for Operation service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +456,10 @@ var Operation_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListIndex",
 			Handler:    _Operation_ListIndex_Handler,
+		},
+		{
+			MethodName: "ListLeaf",
+			Handler:    _Operation_ListLeaf_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -68,6 +68,11 @@ service Operation {
     };
   }
 
+  rpc ListLeaf (ListLeafRequest) returns(ListLeafReply) {
+    option (google.api.http) = {
+      get: "/admin/index/listleaf"
+    };
+  }
 }
 
 message ListNodeRequest {
@@ -136,4 +141,12 @@ message ListIndexRequest {
 
 message ListIndexReply {
   repeated string index = 1;
+}
+
+message ListLeafRequest {
+  Index index = 1;
+}
+
+message ListLeafReply {
+  repeated Leaf leaf = 1;
 }

@@ -32,3 +32,8 @@ message Endpoint {
     string addr = 3;
     Index  index = 4;
 }
+
+message Leaf {
+    string name = 1;
+    string cid = 2;
+}

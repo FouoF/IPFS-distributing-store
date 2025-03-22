@@ -21,9 +21,8 @@ func NewOperationService(uc *biz.OperationUsecase, du *biz.DataUsecase) *Operati
 	manager := manager.NewManager(ch)
 	s := &OperationService{uc: uc, du: du, ch: ch, cm: manager}
 	go WatchCh(s)
-	s.AddEndpoint(context.TODO(), &v1.AddEndpointRequest{Endpoint: 
-		&v1.Endpoint{Addr: "endpoint.default.svc.cluster.local:50051", 
-		Index: &v1.Index{Name: "心率", L1: "1号房间", L2: "1号床", Leafname: ""}} })
+	s.AddEndpoint(context.TODO(), &v1.AddEndpointRequest{Endpoint: &v1.Endpoint{Addr: "endpoint.default.svc.cluster.local:50051",
+		Index: &v1.Index{Name: "心率", L1: "1号房间", L2: "1号床", Leafname: ""}}})
 	return s
 }
 
@@ -116,6 +115,20 @@ func (s *OperationService) ListIndex(ctx context.Context, req *v1.ListIndexReque
 		return nil, err
 	}
 	return &v1.ListIndexReply{Index: indices}, nil
+}
+
+func (s *OperationService) ListLeaf(ctx context.Context, req *v1.ListLeafRequest) (*v1.ListLeafReply, error) {
+	didx := s.du.V1ToDatastore(req.Index)
+	node, err := s.du.GetNode(ctx, didx)
+	leafs := make([]*v1.Leaf, 0)
+	for _, v := range node.Children {
+		l := v1.Leaf{Name: v.Name, Cid: v.Cid.String()}
+		leafs = append(leafs, &l)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &v1.ListLeafReply{Leaf: leafs}, nil
 }
 
 func WatchCh(s *OperationService) {

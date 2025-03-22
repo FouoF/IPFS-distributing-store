@@ -25,6 +25,7 @@ const OperationOperationCreateIndex = "/adminservice.v1.Operation/CreateIndex"
 const OperationOperationGetEndpoint = "/adminservice.v1.Operation/GetEndpoint"
 const OperationOperationListEndpoint = "/adminservice.v1.Operation/ListEndpoint"
 const OperationOperationListIndex = "/adminservice.v1.Operation/ListIndex"
+const OperationOperationListLeaf = "/adminservice.v1.Operation/ListLeaf"
 const OperationOperationListNode = "/adminservice.v1.Operation/ListNode"
 const OperationOperationRemoveEndpoint = "/adminservice.v1.Operation/RemoveEndpoint"
 const OperationOperationRemoveNode = "/adminservice.v1.Operation/RemoveNode"
@@ -36,6 +37,7 @@ type OperationHTTPServer interface {
 	GetEndpoint(context.Context, *GetEndpointRequest) (*GetEndpointReply, error)
 	ListEndpoint(context.Context, *ListEndpointRequest) (*ListEndpointReply, error)
 	ListIndex(context.Context, *ListIndexRequest) (*ListIndexReply, error)
+	ListLeaf(context.Context, *ListLeafRequest) (*ListLeafReply, error)
 	ListNode(context.Context, *ListNodeRequest) (*ListNodeReply, error)
 	RemoveEndpoint(context.Context, *RemoveEndpointRequest) (*RemoveEndpointReply, error)
 	RemoveNode(context.Context, *RemoveNodeRequest) (*RemoveNodeReply, error)
@@ -52,6 +54,7 @@ func RegisterOperationHTTPServer(s *http.Server, srv OperationHTTPServer) {
 	r.POST("/admin/endpoint/remove", _Operation_RemoveEndpoint0_HTTP_Handler(srv))
 	r.POST("/admin/index/create", _Operation_CreateIndex0_HTTP_Handler(srv))
 	r.GET("/admin/index/list", _Operation_ListIndex0_HTTP_Handler(srv))
+	r.GET("/admin/index/listleaf", _Operation_ListLeaf0_HTTP_Handler(srv))
 }
 
 func _Operation_ListNode0_HTTP_Handler(srv OperationHTTPServer) func(ctx http.Context) error {
@@ -240,6 +243,25 @@ func _Operation_ListIndex0_HTTP_Handler(srv OperationHTTPServer) func(ctx http.C
 	}
 }
 
+func _Operation_ListLeaf0_HTTP_Handler(srv OperationHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListLeafRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOperationListLeaf)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListLeaf(ctx, req.(*ListLeafRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListLeafReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OperationHTTPClient interface {
 	AddEndpoint(ctx context.Context, req *AddEndpointRequest, opts ...http.CallOption) (rsp *AddEndpointReply, err error)
 	AddNode(ctx context.Context, req *AddNodeRequest, opts ...http.CallOption) (rsp *AddNodeReply, err error)
@@ -247,6 +269,7 @@ type OperationHTTPClient interface {
 	GetEndpoint(ctx context.Context, req *GetEndpointRequest, opts ...http.CallOption) (rsp *GetEndpointReply, err error)
 	ListEndpoint(ctx context.Context, req *ListEndpointRequest, opts ...http.CallOption) (rsp *ListEndpointReply, err error)
 	ListIndex(ctx context.Context, req *ListIndexRequest, opts ...http.CallOption) (rsp *ListIndexReply, err error)
+	ListLeaf(ctx context.Context, req *ListLeafRequest, opts ...http.CallOption) (rsp *ListLeafReply, err error)
 	ListNode(ctx context.Context, req *ListNodeRequest, opts ...http.CallOption) (rsp *ListNodeReply, err error)
 	RemoveEndpoint(ctx context.Context, req *RemoveEndpointRequest, opts ...http.CallOption) (rsp *RemoveEndpointReply, err error)
 	RemoveNode(ctx context.Context, req *RemoveNodeRequest, opts ...http.CallOption) (rsp *RemoveNodeReply, err error)
@@ -330,6 +353,19 @@ func (c *OperationHTTPClientImpl) ListIndex(ctx context.Context, in *ListIndexRe
 	pattern := "/admin/index/list"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationOperationListIndex))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OperationHTTPClientImpl) ListLeaf(ctx context.Context, in *ListLeafRequest, opts ...http.CallOption) (*ListLeafReply, error) {
+	var out ListLeafReply
+	pattern := "/admin/index/listleaf"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationOperationListLeaf))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

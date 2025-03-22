@@ -131,6 +131,35 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/adminservice.v1.ListIndexReply'
+    /admin/index/listleaf:
+        get:
+            tags:
+                - Operation
+            operationId: Operation_ListLeaf
+            parameters:
+                - name: index.name
+                  in: query
+                  schema:
+                    type: string
+                - name: index.L1
+                  in: query
+                  schema:
+                    type: string
+                - name: index.L2
+                  in: query
+                  schema:
+                    type: string
+                - name: index.leafname
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/adminservice.v1.ListLeafReply'
     /admin/node/add:
         post:
             tags:
@@ -235,6 +264,13 @@ components:
                     type: string
                 leafname:
                     type: string
+        adminservice.v1.Leaf:
+            type: object
+            properties:
+                name:
+                    type: string
+                cid:
+                    type: string
         adminservice.v1.ListEndpointReply:
             type: object
             properties:
@@ -249,6 +285,13 @@ components:
                     type: array
                     items:
                         type: string
+        adminservice.v1.ListLeafReply:
+            type: object
+            properties:
+                leaf:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/adminservice.v1.Leaf'
         adminservice.v1.ListNodeReply:
             type: object
             properties:
