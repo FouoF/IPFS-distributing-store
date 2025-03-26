@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	v1 "ipfs-store/api/admin-service/v1"
+	"ipfs-store/internal/utils"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -27,7 +28,7 @@ func Dial(target string, connection *connection, ch chan Record) error {
 		return err
 	}
 
-	buffer := NewBuffer(BUFFER_SIZE)
+	buffer := utils.NewBuffer(BUFFER_SIZE)
 
 	for {
 		fileChunk, err := stream.Recv()
@@ -40,7 +41,7 @@ func Dial(target string, connection *connection, ch chan Record) error {
 		connection.bits = connection.bits + buffer.Append(fileChunk.Data)
 		if fileChunk.IsFinalChunk {
 			name := fileChunk.Index.Leafname
-			cid, err := connection.manager.client.PinDirect(buffer.data, name)
+			cid, err := connection.manager.client.PinDirect(buffer, name)
 			if err != nil {
 				fmt.Printf("pin direct error: %v", err)
 				continue
