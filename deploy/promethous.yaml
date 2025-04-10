@@ -11,12 +11,37 @@ metadata:
 data:
   prometheus.yml: |
     global:
-      scrape_interval: 15s
+      scrape_interval: 60s
 
     scrape_configs:
       - job_name: 'node-exporter'
         static_configs:
           - targets: ['node-exporter.monitoring.svc.cluster.local:9100']
+
+      - job_name: 'kubernetes-kubelet'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true  # Only use if CA verification fails
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        kubernetes_sd_configs:
+          - role: node
+
+        relabel_configs:
+          # Replace hostname with node IP and Kubelet port (10250)
+          - source_labels: [__address__]
+            regex: '(.*):.*'
+            target_label: __address__
+            replacement: '${1}:10250'
+          # Explicitly set metrics path (avoid default /metrics)
+          - source_labels: []
+            target_label: __metrics_path__
+            replacement: /metrics/cadvisor
+          # Add useful labels
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -33,6 +58,7 @@ spec:
       labels:
         app: prometheus
     spec:
+      serviceAccountName: prometheus-sa
       containers:
         - name: prometheus
           image: prom/prometheus:latest
