@@ -11,7 +11,6 @@ import (
 )
 
 func Dial(target string, connection *connection, ch chan Record) error {
-	// 连接到 gRPC 服务器
 	conn, err := grpc.NewClient(fmt.Sprintf("dns:///%v", target), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return err
@@ -22,7 +21,6 @@ func Dial(target string, connection *connection, ch chan Record) error {
 
 	connection.health = true
 	defer connection.SetHealthToFalse()
-	// 客户端调用 SyncDataFromEndpoint 方法
 	stream, err := client.SyncDataFromEndpoint(connection.ctx, &v1.SyncDataFromEndpointRequest{})
 	if err != nil {
 		return err
