@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	v1 "ipfs-store/api/admin-service/v1"
+	"ipfs-store/internal/k8sclient"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -21,16 +22,23 @@ type NodeList struct {
 }
 
 type OperationUsecase struct {
+	client       *k8sclient.K8sClient
 	endpointList EndpointList
 	nodeList     NodeList
 	log          *log.Helper
 }
 
 func NewOperationUsecase(logger log.Logger) *OperationUsecase {
+	c, err := k8sclient.NewK8sClient()
+	if err != nil {
+		log.Errorf("failed to create k8s client: %v", err)
+		panic(err)
+	}
 	return &OperationUsecase{
-		log: log.NewHelper(logger), 
-		endpointList: EndpointList{endpoints: make(map[string]*v1.Endpoint)}, 
-		nodeList: NodeList{nodes: make(map[string]*v1.Node)}}
+		client:       c,
+		log:          log.NewHelper(logger),
+		endpointList: EndpointList{endpoints: make(map[string]*v1.Endpoint)},
+		nodeList:     NodeList{nodes: make(map[string]*v1.Node)}}
 }
 
 func (uc *OperationUsecase) AddEndpoint(ctx context.Context, endpoint *v1.Endpoint) error {
@@ -82,6 +90,11 @@ func (uc *OperationUsecase) AddNode(ctx context.Context, node *v1.Node) error {
 		log.Errorf("node already exists")
 		return nil
 	}
+	err := uc.client.ClusterScaleUP("ipfs-store-cluster", 1)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("failed to add node: %v", node.Name)
+		return err
+	}
 	uc.nodeList.nodes[node.Addr] = &v1.Node{
 		Addr: node.Addr,
 		Id:   node.Id,
@@ -112,6 +125,11 @@ func (uc *OperationUsecase) DeleteNode(ctx context.Context, addr string) error {
 	uc.log.WithContext(ctx).Infof("delete node: %v", addr)
 	uc.nodeList.lock.Lock()
 	defer uc.nodeList.lock.Unlock()
+	err := uc.client.ClusterScaleDown("ipfs-store-cluster", 1)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("failed to delete node: %v", addr)
+		return err
+	}
 	delete(uc.nodeList.nodes, addr)
 	return nil
 }

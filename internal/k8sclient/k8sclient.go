@@ -40,7 +40,7 @@ func NewK8sClient() (*K8sClient, error) {
 	return &K8sClient{client: k8sClient}, nil
 }
 
-func (c *K8sClient) ClusterScale(name string, replica int) error {
+func (c *K8sClient) ClusterScaleUP(name string, num int) error {
 	// Fetch and update CRD
 	instance := &v1.IpfsCluster{}
 	err := c.client.Get(context.TODO(), client.ObjectKey{Namespace: "default", Name: name}, instance)
@@ -48,7 +48,30 @@ func (c *K8sClient) ClusterScale(name string, replica int) error {
 		return err
 	}
 
-	instance.Spec.Replicas = int32(replica)
+	instance.Spec.Replicas = instance.Spec.Replicas + int32(num)
+
+	// Update the CRD instance in the cluster
+	err = c.client.Update(context.TODO(), instance)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("CRD instance updated successfully")
+	return nil
+}
+
+func (c *K8sClient) ClusterScaleDown(name string, num int) error {
+	// Fetch and update CRD
+	instance := &v1.IpfsCluster{}
+	err := c.client.Get(context.TODO(), client.ObjectKey{Namespace: "default", Name: name}, instance)
+	if err != nil {
+		return err
+	}
+
+	if num > int(instance.Spec.Replicas) {
+		return fmt.Errorf("cannot scale down more than the current number of replicas")
+	}
+	instance.Spec.Replicas = instance.Spec.Replicas - int32(num)
 
 	// Update the CRD instance in the cluster
 	err = c.client.Update(context.TODO(), instance)
