@@ -16,13 +16,12 @@ type server struct {
 	v1.UnimplementedSyncServer
 }
 
-func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, stream v1.Sync_SyncDataFromEndpointServer) error {
+func (s *server) dataTemplate(name, l1, l2, unit string, base int, stream v1.Sync_SyncDataFromEndpointServer) error {
 	startTime := time.Date(2025, 3, 19, 15, 0, 0, 0, time.UTC)
-	// 示例索引
 	idx := v1.Index{
-		Name:     "心率",
-		L1:       "1号房间",
-		L2:       "1号床",
+		Name:     name,
+		L1:       l1,
+		L2:       l2,
 		Leafname: startTime.Format("2006-01-02 15:04:05"),
 	}
 
@@ -35,13 +34,13 @@ func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, strea
 		for i := range 60 {
 			// 每个数据块的心率数据为：时间戳 + 心率值
 			startTime = startTime.Add(time.Minute * time.Duration(1))
-			heartRate := 60 + r.Intn(10) // 假设心率数据从 60 开始，并且每次递增 1
+			value := base + r.Intn(10)
 
 			// 创建一个 FileChunk
 			fileChunk := &v1.FileChunk{
 				Index:        &idx,
 				ChunkIndex:   int64(i),
-				Data:         fmt.Appendf(nil, "%s 心率：%d bpm", startTime.Format("2006-01-02 15:04:05"), heartRate),
+				Data:         fmt.Appendf(nil, "%s %s:%d %s\n", startTime.Format("2006-01-02 15:04:05"), name, value, unit),
 				IsFinalChunk: i == 59, // 最后一块数据设置 IsFinalChunk 为 true
 			}
 
@@ -50,6 +49,43 @@ func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, strea
 				return err
 			}
 		}
+	}
+	return nil
+}
+
+func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, stream v1.Sync_SyncDataFromEndpointServer) error {
+	var err error
+	err = s.dataTemplate("心率", "1号房间", "1号床", "次/分", 60, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("心率", "2号房间", "1号床", "次/分", 60, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("心率", "1号房间", "2号床", "次/分", 60, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("心率", "2号房间", "2号床", "次/分", 60, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("血压", "1号房间", "1号床", "/120mmHg", 70, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("血压", "2号房间", "1号床", "/120mmHg", 70, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("血压", "1号房间", "2号床", "/120mmHg", 70, stream)
+	if err != nil {
+		return err
+	}
+	err = s.dataTemplate("血压", "2号房间", "2号床", "/120mmHg", 70, stream)
+	if err != nil {
+		return err
 	}
 	return nil
 }

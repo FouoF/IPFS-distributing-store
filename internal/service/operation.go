@@ -22,7 +22,8 @@ func NewOperationService(uc *biz.OperationUsecase, du *biz.DataUsecase) *Operati
 	s := &OperationService{uc: uc, du: du, ch: ch, cm: manager}
 	go WatchCh(s)
 	s.AddEndpoint(context.TODO(), &v1.AddEndpointRequest{Endpoint: &v1.Endpoint{Addr: "endpoint.default.svc.cluster.local:50051",
-		Index: &v1.Index{Name: "心率", L1: "1号房间", L2: "1号床", Leafname: ""}}})
+		Index:       &v1.Index{Name: "心率", L1: "1号房间", L2: "1号床", Leafname: ""},
+		Description: "1号床1号房间心率"}})
 	return s
 }
 
