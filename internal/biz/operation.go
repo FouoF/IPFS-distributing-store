@@ -45,37 +45,37 @@ func NewOperationUsecase(logger log.Logger) *OperationUsecase {
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "心率", L1: "1号房间", L2: "2号床", Leafname: ""},
 			Description: "1号床1号房间心率",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50050",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "心率", L1: "2号房间", L2: "1号床", Leafname: ""},
 			Description: "2号床1号房间心率",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50052",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "心率", L1: "2号房间", L2: "2号床", Leafname: ""},
 			Description: "2号床2号房间心率",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50053",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "血压", L1: "1号房间", L2: "1号床", Leafname: ""},
 			Description: "1号床1号房间血压",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50054",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "血压", L1: "1号房间", L2: "2号床", Leafname: ""},
 			Description: "1号床2号房间血压",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50055",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "血压", L1: "2号房间", L2: "1号床", Leafname: ""},
 			Description: "2号床1号房间血压",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50056",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
 			Index:       &v1.Index{Name: "血压", L1: "2号房间", L2: "2号床", Leafname: ""},
 			Description: "2号床2号房间血压",
-			Addr:        "endpoint.default.svc.cluster.local:50051",
+			Addr:        "endpoint.default.svc.cluster.local:50057",
 		})
 		op.nodeList.nodes = map[string]*v1.Node{
 			"ipfs-ssd-1.default.svc.cluster.local:9094": {
@@ -83,17 +83,17 @@ func NewOperationUsecase(logger log.Logger) *OperationUsecase {
 				Id:   "0",
 				Name: "SSD-1",
 			},
-			"ipfs-ssd-2.default.svc.cluster.local:50051": {
+			"ipfs-ssd-2.default.svc.cluster.local:9094": {
 				Addr: "ipfs-ssd.default.svc.cluster.local:9094",
 				Id:   "0",
 				Name: "SSD-2",
 			},
-			"ipfs-hdd-1.default.svc.cluster.local:50051": {
+			"ipfs-hdd-1.default.svc.cluster.local:9094": {
 				Addr: "ipfs-hdd.default.svc.cluster.local:9094",
 				Id:   "0",
 				Name: "HDD-1",
 			},
-			"ipfs-hdd-2.default.svc.cluster.local:50051": {
+			"ipfs-hdd-2.default.svc.cluster.local:9094": {
 				Addr: "ipfs-hdd.default.svc.cluster.local:9094",
 				Id:   "0",
 				Name: "HDD-2",
