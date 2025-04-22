@@ -43,36 +43,43 @@ func NewOperationUsecase(logger log.Logger) *OperationUsecase {
 		nodeList:     NodeList{nodes: make(map[string]*v1.Node)}}
 	if enableTestFake {
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "0",
 			Index:       &v1.Index{Name: "心率", L1: "1号房间", L2: "2号床", Leafname: ""},
 			Description: "1号床1号房间心率",
 			Addr:        "endpoint.default.svc.cluster.local:50050",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "2",
 			Index:       &v1.Index{Name: "心率", L1: "2号房间", L2: "1号床", Leafname: ""},
 			Description: "2号床1号房间心率",
 			Addr:        "endpoint.default.svc.cluster.local:50052",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "3",
 			Index:       &v1.Index{Name: "心率", L1: "2号房间", L2: "2号床", Leafname: ""},
 			Description: "2号床2号房间心率",
 			Addr:        "endpoint.default.svc.cluster.local:50053",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "4",
 			Index:       &v1.Index{Name: "血压", L1: "1号房间", L2: "1号床", Leafname: ""},
 			Description: "1号床1号房间血压",
 			Addr:        "endpoint.default.svc.cluster.local:50054",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "5",
 			Index:       &v1.Index{Name: "血压", L1: "1号房间", L2: "2号床", Leafname: ""},
 			Description: "1号床2号房间血压",
 			Addr:        "endpoint.default.svc.cluster.local:50055",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "6",
 			Index:       &v1.Index{Name: "血压", L1: "2号房间", L2: "1号床", Leafname: ""},
 			Description: "2号床1号房间血压",
 			Addr:        "endpoint.default.svc.cluster.local:50056",
 		})
 		op.AddEndpoint(context.TODO(), &v1.Endpoint{
+			Id:          "7",
 			Index:       &v1.Index{Name: "血压", L1: "2号房间", L2: "2号床", Leafname: ""},
 			Description: "2号床2号房间血压",
 			Addr:        "endpoint.default.svc.cluster.local:50057",
@@ -85,17 +92,17 @@ func NewOperationUsecase(logger log.Logger) *OperationUsecase {
 			},
 			"ipfs-ssd-2.default.svc.cluster.local:9094": {
 				Addr: "ipfs-ssd.default.svc.cluster.local:9094",
-				Id:   "0",
+				Id:   "1",
 				Name: "SSD-2",
 			},
 			"ipfs-hdd-1.default.svc.cluster.local:9094": {
 				Addr: "ipfs-hdd.default.svc.cluster.local:9094",
-				Id:   "0",
+				Id:   "2",
 				Name: "HDD-1",
 			},
 			"ipfs-hdd-2.default.svc.cluster.local:9094": {
 				Addr: "ipfs-hdd.default.svc.cluster.local:9094",
-				Id:   "0",
+				Id:   "3",
 				Name: "HDD-2",
 			},
 		}

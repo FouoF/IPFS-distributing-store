@@ -33,11 +33,9 @@ func NewIPFSClient() *IPFSClient {
 
 func (c *IPFSClient) PinDirect(buf *utils.Buffer, filename string) (cid.Cid, error) {
 	var data []byte
-	{
-		buf.Mux.RLock()
-		defer buf.Mux.Unlock()
-		data = buf.Data[:buf.Length()]
-	}
+	buf.Mux.RLock()
+	data = buf.Data[:buf.Length()]
+	buf.Mux.Unlock()
 	// 严格对齐 CLI 默认参数
 	params := url.Values{
 		"chunker":             []string{"size-262144"},

@@ -48,6 +48,8 @@ func (s *server) dataTemplate(name, l1, l2, unit string, base int, stream v1.Syn
 			if err := stream.Send(fileChunk); err != nil {
 				return err
 			}
+
+			fmt.Println(fileChunk.Data)
 		}
 	}
 	return nil
