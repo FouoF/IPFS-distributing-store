@@ -97,5 +97,7 @@ func (c *IPFSClient) PinDirect(buf *utils.Buffer, filename string) (cid.Cid, err
 		return cid.Undef, fmt.Errorf("decode response failed: %v", err)
 	}
 
+	time.Sleep(1 * time.Second)
+
 	return cid.Decode(result.Cid)
 }

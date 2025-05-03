@@ -8,37 +8,37 @@ import (
 	"github.com/ipfs/go-cid"
 )
 
-const BUFFER_SIZE = 4096
+const BUFFER_SIZE = 4 * 4096
 
 type Record struct {
-	Addr    string
-	Cid     cid.Cid
-	Name	string
+	Addr string
+	Cid  cid.Cid
+	Name string
 }
 
 type connection struct {
-	ctx 		context.Context
-	bits    	int
-	health 		bool
-	cancel  	context.CancelFunc
-	manager 	*Manager
+	ctx     context.Context
+	bits    int
+	health  bool
+	cancel  context.CancelFunc
+	manager *Manager
 }
 
 type Manager struct {
-	client 	   *client.IPFSClient
+	client      *client.IPFSClient
 	connections map[string]connection
 	callbackch  chan Record
 }
 
 func NewManager(cbch chan Record) *Manager {
 	return &Manager{
-		client: 	 client.NewIPFSClient(),
+		client:      client.NewIPFSClient(),
 		connections: make(map[string]connection),
 		callbackch:  cbch,
 	}
 }
 
-func (m *Manager) DialAddr(addr string) error{
+func (m *Manager) DialAddr(addr string) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	connection := connection{ctx: ctx, cancel: cancel, manager: m}
@@ -51,15 +51,15 @@ func (m *Manager) DialAddr(addr string) error{
 	return nil
 }
 
-func (m *Manager) Close(addr string){
+func (m *Manager) Close(addr string) {
 	m.connections[addr].cancel()
 }
 
-func (m *Manager) Health(addr string) bool{
+func (m *Manager) Health(addr string) bool {
 	return m.connections[addr].health
 }
 
-func (m *Manager) GetBits(addr string) int{
+func (m *Manager) GetBits(addr string) int {
 	return m.connections[addr].bits
 }
 

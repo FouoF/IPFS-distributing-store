@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: cluster-storage-pv-1
+spec:
+  capacity:
+    storage: 1Gi  # Must match the PVC request
+  accessModes:
+    - ReadWriteOnce  # Must match the PVC access mode
+  persistentVolumeReclaimPolicy: Retain  # Choose Retain, Delete, or Recycle
+  storageClassName: ""  # Should be empty if PVC does not specify one
+  volumeMode: Filesystem  # Matches PVC's volumeMode
+  hostPath:
+    path: "/mnt/data/ipfs-cluster-1"  # Change this based on your storage type
+

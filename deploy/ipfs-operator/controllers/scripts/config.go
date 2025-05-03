@@ -115,7 +115,7 @@ run_ipfs_cluster() {
 		fi
 		log "starting ipfs-cluster using the bootstrap address"
 		# Only ipfs user can get here
-		exec ipfs-cluster-service daemon --upgrade --bootstrap "${BOOTSTRAP_ADDR}" --leave
+		exec ipfs-cluster-service --loglevel info,cluster:debug,pintracker:debug daemon --upgrade --bootstrap "${BOOTSTRAP_ADDR}" --leave
 	fi
 }
 

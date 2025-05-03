@@ -8,7 +8,7 @@ metadata:
 spec:
   ipfsStorage: 2Gi
   clusterStorage: 1Gi
-  replicas: 1
+  replicas: 2
   follows: []
   networking:
     circuitRelays: 1

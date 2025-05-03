@@ -49,9 +49,11 @@ func (s *server) dataTemplate(name, l1, l2, unit string, base int, stream v1.Syn
 				return err
 			}
 
-			fmt.Println(fileChunk.Data)
+			fmt.Println(idx.Leafname)
 		}
 	}
+
+	time.Sleep(1 * time.Second)
 	return nil
 }
 
