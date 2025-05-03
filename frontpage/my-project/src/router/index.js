@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import EndpointView from '@/components/EndpointView.vue';
-import NodeView from '@/components/NodeView.vue';
+import NodeView from '@/components/NodeView_fake.vue';
 import QueryView from '@/components/QueryView.vue';
 
 const routes = [
