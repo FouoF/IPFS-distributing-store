@@ -110,7 +110,7 @@ export default {
     // 删除端点
     async removeEndpoint(endpoint) {
       try {
-        await removeEndpoint(endpoint.index);  // 使用 `index` 来删除端点
+        await removeEndpoint(endpoint.addr);  // 使用 `index` 来删除端点
         this.fetchEndpoints();  // 重新加载端点数据
       } catch (error) {
         this.$message.error('Failed to remove endpoint');
