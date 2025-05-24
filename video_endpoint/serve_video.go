@@ -57,8 +57,8 @@ func (s *server) dataTemplate(name, l1, l2, path string, stream v1.Sync_SyncData
 	}
 
 	// 假设视频路径为指定路径（这里使用一个示例路径，实际路径根据需求指定）
-	videoPath := path  + "video.mp4"
-	chunkSize := int64(4096) // 每个数据块大小为 1MB（可以根据需求调整）
+	videoPath := path + "video.mp4"
+	chunkSize := int64(4096)
 
 	// 获取视频文件分段
 	chunks, err := splitVideoFile(videoPath, chunkSize)
@@ -77,7 +77,7 @@ func (s *server) dataTemplate(name, l1, l2, path string, stream v1.Sync_SyncData
 			fileChunk := &v1.FileChunk{
 				Index:        &idx,
 				ChunkIndex:   int64(i),
-				Data:         chunk,  // 这里直接传递视频块数据
+				Data:         chunk,              // 这里直接传递视频块数据
 				IsFinalChunk: i == len(chunks)-1, // 最后一块数据设置 IsFinalChunk 为 true
 			}
 
@@ -94,16 +94,15 @@ func (s *server) dataTemplate(name, l1, l2, path string, stream v1.Sync_SyncData
 	return nil
 }
 
-
 func (s *server) SyncDataFromEndpoint(req *v1.SyncDataFromEndpointRequest, stream v1.Sync_SyncDataFromEndpointServer) error {
-	err := s.dataTemplate("监控", "一号楼", "1号房间", "/data", stream)
+	err := s.dataTemplate("监控", "一号楼", "1号房间", "/data/", stream)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50052")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -111,7 +110,7 @@ func main() {
 	s := grpc.NewServer()
 	v1.RegisterSyncServer(s, &server{})
 
-	fmt.Println("Server is listening on port 50051...")
+	fmt.Println("Server is listening on port 50052...")
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

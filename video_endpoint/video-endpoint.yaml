@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videoendpoint
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: videoendpoint
+  template:
+    metadata:
+      labels:
+        app: videoendpoint
+    spec:
+      containers:
+        - name: videoendpoint
+          image: localhost:5000/video-endpoint:latest
+          ports:
+            - containerPort: 50052
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videoendpoint
+spec:
+  selector:
+    app: videoendpoint
+  ports:
+    - name: http
+      protocol: TCP
+      port: 50052
+      targetPort: 50052
+  type: ClusterIP
